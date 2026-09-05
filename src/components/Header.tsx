@@ -24,6 +24,7 @@ interface HeaderProps {
   currentUser: Student;
   onOpenSettings: () => void;
   onOpenEditProfile?: () => void;
+  onOpenPortalLogin?: () => void;
   userRole: UserRole;
   onSelectUserRole: (role: UserRole) => void;
 }
@@ -38,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   onOpenSettings,
   onOpenEditProfile,
+  onOpenPortalLogin,
   userRole,
   onSelectUserRole
 }) => {
@@ -85,13 +87,28 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Top Banner Mode Bar */}
       <div className="bg-zinc-100 dark:bg-[#121212] text-zinc-900 dark:text-zinc-100 px-4 py-1.5 text-xs font-medium flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border border-zinc-300 dark:border-zinc-700">
-              <VectorDrawIcon name="target" size="xs" badge={false} className="w-3.5 h-3.5" />
-              Talent & Technical Prep Hub
+            {/* Active Portal Badge Button */}
+            <button
+              onClick={onOpenPortalLogin}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer shadow-2xs ${
+                userRole === 'student'
+                  ? 'bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800 hover:bg-indigo-100'
+                  : userRole === 'company'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100'
+                  : 'bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-800 hover:bg-purple-100'
+              }`}
+              title="Click to switch your access gateway portal"
+            >
+              <span>
+                {userRole === 'student' ? '🎓 Student Portal' : userRole === 'company' ? '🏢 Enterprise Recruiter' : '🏫 Academic Faculty'}
+              </span>
+              <span className="text-[9px] opacity-75 underline uppercase tracking-widest font-mono">Switch</span>
+            </button>
+            <span className="hidden md:inline text-zinc-600 dark:text-zinc-400 text-[11px]">
+              {userRole === 'student' ? 'Technical Simulation & Talent Portfolio' : userRole === 'company' ? 'Verified Candidate Recruitment & AI Audits' : 'Academic Cohort Management & Grading'}
             </span>
-            <span className="hidden sm:inline text-zinc-600 dark:text-zinc-400 text-[11px]">Talent Discovery & Technical Simulation</span>
           </div>
           
           <div className="flex items-center bg-zinc-200 dark:bg-zinc-800 p-0.5 rounded-full border border-zinc-300 dark:border-zinc-700">

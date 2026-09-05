@@ -53,6 +53,7 @@ import { CreateCollabModal } from './components/modals/CreateCollabModal';
 import { ConnectModal } from './components/modals/ConnectModal';
 import { SettingsModal } from './components/modals/SettingsModal';
 import { UserProfileModal } from './components/modals/UserProfileModal';
+import { PortalLoginModal } from './components/modals/PortalLoginModal';
 
 import { LoadingScreen } from './components/common/LoadingScreen';
 
@@ -73,8 +74,14 @@ export function App() {
   // Current active mode: 'ecosystem' or 'prep'
   const [mode, setMode] = useState<AppMode>('ecosystem');
 
-  // User role / Perspective (Student, Teacher, Company Sponsor)
-  const [userRole, setUserRole] = useState<UserRole>('student');
+  // User role / Perspective (Student, Teacher/School, Company Sponsor)
+  const [userRole, setUserRole] = useState<UserRole>(() => {
+    const saved = localStorage.getItem('geova_user_role');
+    if (saved === 'student' || saved === 'teacher' || saved === 'company') {
+      return saved as UserRole;
+    }
+    return 'student';
+  });
 
   // Sub-views
   const [ecosystemView, setEcosystemView] = useState<EcosystemView>('home'); // change default view to home instead of landing, or keep landing? Landing is fine but 'home' makes it feel like an app. Let's make it 'landing' but let users land elegantly. Actually 'home' is standard now. Let's keep 'home'.
@@ -120,6 +127,7 @@ export function App() {
   const [connectData, setConnectData] = useState<{ name: string; role?: string } | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
+  const [portalLoginOpen, setPortalLoginOpen] = useState(false);
 
   // Authenticated dynamic user profile state
   const [currentUser, setCurrentUser] = useState<Student>(() => {
@@ -267,6 +275,7 @@ export function App() {
         currentUser={currentUser}
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenEditProfile={() => setUserProfileModalOpen(true)}
+        onOpenPortalLogin={() => setPortalLoginOpen(true)}
         userRole={userRole}
         onSelectUserRole={role => {
           setUserRole(role);
@@ -563,6 +572,24 @@ export function App() {
           userRole={userRole}
           onSaveProfile={handleSaveUserProfile}
           onClose={() => setUserProfileModalOpen(false)}
+        />
+      )}
+
+      {portalLoginOpen && (
+        <PortalLoginModal
+          currentRole={userRole}
+          onSelectRole={role => {
+            setUserRole(role);
+            localStorage.setItem('geova_user_role', role);
+            setMode('ecosystem');
+            if (role === 'teacher' || role === 'company') {
+              setEcosystemView('teacher-company-portal');
+            } else {
+              setEcosystemView('home');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onClose={() => setPortalLoginOpen(false)}
         />
       )}
     </div>
