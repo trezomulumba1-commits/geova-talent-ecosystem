@@ -1,0 +1,11 @@
+{
+  "name": "Remix Remix GEOVA - Talent Ecosystem \u0026 Prep Platform",
+  "description": "Showcase validated student tech projects, discover talent, collaborate on startups, and practice AI-powered technical and behavioral mock interviews.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
