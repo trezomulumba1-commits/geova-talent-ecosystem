@@ -42,12 +42,23 @@ export const GeovaLogo: React.FC<GeovaLogoProps> = ({
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       animate={
-        isScrolled
-          ? { scale: 0.95 }
-          : { scale: 1 }
+        isHovered
+          ? { scale: 1.06, y: -2 }
+          : isScrolled
+          ? { scale: 0.95, y: 0 }
+          : { scale: 1, y: 0 }
       }
-      transition={{ duration: 0.3 }}
+      transition={{ type: 'spring', stiffness: 350, damping: 22 }}
     >
+      {/* Dynamic Iris Glow Aura on Hover */}
+      <motion.div
+        className="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-500/20 via-sky-400/20 to-violet-500/20 blur-xl pointer-events-none"
+        animate={{
+          opacity: isHovered ? 0.9 : 0.25,
+          scale: isHovered ? 1.4 : 1,
+        }}
+        transition={{ duration: 0.35 }}
+      />
       <motion.svg
         width={w}
         height={h}

@@ -23,6 +23,7 @@ interface HeaderProps {
   onSelectPrepView: (view: PrepView) => void;
   currentUser: Student;
   onOpenSettings: () => void;
+  onOpenEditProfile?: () => void;
   userRole: UserRole;
   onSelectUserRole: (role: UserRole) => void;
 }
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectPrepView,
   currentUser,
   onOpenSettings,
+  onOpenEditProfile,
   userRole,
   onSelectUserRole
 }) => {
@@ -629,18 +631,30 @@ export const Header: React.FC<HeaderProps> = ({
             <VectorDrawIcon name="settings" size="xs" />
           </button>
 
-          {/* User Profile Avatar Link */}
-          <button 
-            onClick={() => onSelectEcosystemView('student-profile')}
-            className="w-9 h-9 rounded-full overflow-hidden border-2 border-zinc-300 dark:border-zinc-700 hover:ring-2 hover:ring-black dark:hover:ring-white transition-all ml-1 shrink-0 cursor-pointer"
-            title={`${currentUser.name} - View Profile`}
-          >
-            <img 
-              src={currentUser.avatar} 
-              alt={currentUser.name} 
-              className="w-full h-full object-cover"
-            />
-          </button>
+          {/* User Profile Avatar & Edit Account Pill */}
+          <div className="flex items-center gap-1.5 ml-1 shrink-0">
+            <button 
+              onClick={() => onSelectEcosystemView('student-profile')}
+              className="w-9 h-9 rounded-full overflow-hidden border-2 border-indigo-500/50 hover:border-indigo-500 hover:ring-2 hover:ring-indigo-500/30 transition-all cursor-pointer shadow-xs"
+              title={`${currentUser.name} - View Profile`}
+            >
+              <img 
+                src={currentUser.avatar} 
+                alt={currentUser.name} 
+                className="w-full h-full object-cover"
+              />
+            </button>
+            {onOpenEditProfile && (
+              <button
+                onClick={onOpenEditProfile}
+                className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 rounded-full text-[11px] font-bold transition-all cursor-pointer shadow-2xs"
+                title="Customize your real account details"
+              >
+                <User className="w-3 h-3" />
+                <span className="max-w-[90px] truncate">{currentUser.name.split(' ')[0]}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

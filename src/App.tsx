@@ -52,6 +52,7 @@ import { ApplyModal } from './components/modals/ApplyModal';
 import { CreateCollabModal } from './components/modals/CreateCollabModal';
 import { ConnectModal } from './components/modals/ConnectModal';
 import { SettingsModal } from './components/modals/SettingsModal';
+import { UserProfileModal } from './components/modals/UserProfileModal';
 
 import { LoadingScreen } from './components/common/LoadingScreen';
 
@@ -118,9 +119,33 @@ export function App() {
   const [createCollabOpen, setCreateCollabOpen] = useState(false);
   const [connectData, setConnectData] = useState<{ name: string; role?: string } | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
 
-  // Current logged in user (Alex Mwansa as seen in mockups)
-  const currentUser = students[0];
+  // Authenticated dynamic user profile state
+  const [currentUser, setCurrentUser] = useState<Student>(() => {
+    const saved = localStorage.getItem('geova_user_profile');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved user profile:', e);
+      }
+    }
+    return INITIAL_STUDENTS[0];
+  });
+
+  const handleSaveUserProfile = (updatedProfile: Student, newRole: UserRole) => {
+    setCurrentUser(updatedProfile);
+    setUserRole(newRole);
+    localStorage.setItem('geova_user_profile', JSON.stringify(updatedProfile));
+    setStudents(prev => {
+      const exists = prev.some(s => s.id === updatedProfile.id);
+      if (exists) {
+        return prev.map(s => s.id === updatedProfile.id ? updatedProfile : s);
+      }
+      return [updatedProfile, ...prev];
+    });
+  };
 
   // Handlers for Ecosystem navigation
   const handleOpenProject = (projectId: string) => {
@@ -241,6 +266,7 @@ export function App() {
         }}
         currentUser={currentUser}
         onOpenSettings={() => setSettingsOpen(true)}
+        onOpenEditProfile={() => setUserProfileModalOpen(true)}
         userRole={userRole}
         onSelectUserRole={role => {
           setUserRole(role);
@@ -528,6 +554,15 @@ export function App() {
         <SettingsModal
           onClose={() => setSettingsOpen(false)}
           onResetData={handleResetData}
+        />
+      )}
+
+      {userProfileModalOpen && (
+        <UserProfileModal
+          currentUser={currentUser}
+          userRole={userRole}
+          onSaveProfile={handleSaveUserProfile}
+          onClose={() => setUserProfileModalOpen(false)}
         />
       )}
     </div>
