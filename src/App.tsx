@@ -56,9 +56,29 @@ import { UserProfileModal } from './components/modals/UserProfileModal';
 import { PortalLoginModal } from './components/modals/PortalLoginModal';
 
 import { LoadingScreen } from './components/common/LoadingScreen';
+import { LoginPage } from './pages/LoginPage';
+import { getCachedUser, logout as authLogout, PortalRole } from './services/authService';
 
 export function App() {
   const [appLoading, setAppLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getCachedUser());
+
+  // Sync cached auth user into currentUser on first load
+  useEffect(() => {
+    const authUser = getCachedUser();
+    if (authUser && isAuthenticated) {
+      setCurrentUser(prev => ({
+        ...prev,
+        id: authUser.id,
+        name: authUser.name,
+        role: authUser.role === 'company' ? 'Recruiter' : authUser.role === 'school' ? 'Faculty' : 'Student',
+        title: authUser.title || prev.title,
+        avatar: authUser.avatar || prev.avatar,
+        about: authUser.bio || prev.about,
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (appLoading) {
@@ -155,6 +175,12 @@ export function App() {
     });
   };
 
+  const handleLogout = () => {
+    authLogout();
+    setIsAuthenticated(false);
+    setSettingsOpen(false);
+  };
+
   // Handlers for Ecosystem navigation
   const handleOpenProject = (projectId: string) => {
     setSelectedProjectId(projectId);
@@ -248,6 +274,25 @@ export function App() {
   const activeStudent = students.find(s => s.id === selectedStudentId) || students[0];
   const activeCompany = companies.find(c => c.id === selectedCompanyId) || companies[0];
   const activeOpportunity = opportunities.find(o => o.id === selectedOpportunityId) || opportunities[0];
+
+  // Auth-gate: show login page if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <LoginPage
+        onAuthSuccess={(role: PortalRole, userName: string) => {
+          const roleMap: Record<PortalRole, UserRole> = { student: 'student', company: 'company', school: 'teacher' };
+          setUserRole(roleMap[role]);
+          localStorage.setItem('geova_user_role', roleMap[role]);
+          if (role === 'company' || role === 'school') {
+            setEcosystemView('teacher-company-portal');
+          } else {
+            setEcosystemView('home');
+          }
+          setIsAuthenticated(true);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f9ff] text-[#0b1c30] flex flex-col selection:bg-[#3525cd] selection:text-white pb-20 md:pb-8">
@@ -563,6 +608,7 @@ export function App() {
         <SettingsModal
           onClose={() => setSettingsOpen(false)}
           onResetData={handleResetData}
+          onLogout={handleLogout}
         />
       )}
 

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { X, Mic, Video, Bell, RotateCcw, Check, Sliders } from 'lucide-react';
+import { X, Mic, Video, Bell, RotateCcw, Check, Sliders, LogOut } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { VectorDrawIcon } from '../common/VectorDrawIcon';
 
 interface SettingsModalProps {
   onClose: () => void;
   onResetData: () => void;
+  onLogout?: () => void;
 }
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, onResetData }) => {
+export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, onResetData, onLogout }) => {
   const { theme, isDark, toggleTheme } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [micInput, setMicInput] = useState('Default - Integrated Microphone');
@@ -130,12 +131,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, onResetDa
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[#eceef3] dark:border-white/10 flex justify-end">
+        <div className="pt-4 border-t border-[#eceef3] dark:border-white/10 flex items-center justify-between gap-3">
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-rose-700/40 text-rose-500 dark:text-rose-400 hover:bg-rose-950/20 font-bold text-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Sign Out
+            </button>
+          )}
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-[#3525cd] hover:bg-[#1e00a9] text-white font-bold text-xs rounded-xl shadow-xs transition-all"
+            className="ml-auto px-5 py-2 bg-[#3525cd] hover:bg-[#1e00a9] text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer"
           >
-            Save & Close
+            Save &amp; Close
           </button>
         </div>
       </div>
