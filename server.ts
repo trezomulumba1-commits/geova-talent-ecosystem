@@ -57,7 +57,7 @@ function requireAuth(req: any, res: any, next: any) {
 // IN-MEMORY USER STORE (ready to swap to a real DB)
 // Format: { id, email, passwordHash, role, name, institution?, title? }
 // ─────────────────────────────────────────────────────────────────────────────
-type UserRole = "student" | "company" | "school";
+type UserRole = "student" | "employer" | "provider" | "admin";
 
 interface UserRecord {
   id: string;
@@ -97,7 +97,7 @@ const userStore: Map<string, UserRecord> = new Map([
       id: "usr-company-001",
       email: "recruiter@geova.ai",
       passwordHash: hashPassword("company123"),
-      role: "company",
+      role: "employer",
       name: "Sophia Chen",
       title: "Senior Technical Recruiter",
       institution: "Nebula AI",
@@ -112,7 +112,7 @@ const userStore: Map<string, UserRecord> = new Map([
       id: "usr-school-001",
       email: "faculty@geova.ai",
       passwordHash: hashPassword("school123"),
-      role: "school",
+      role: "provider",
       name: "Prof. Damilola Adeyemi",
       title: "Associate Professor of CS",
       institution: "MIT EECS Department",

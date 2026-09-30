@@ -51,7 +51,7 @@ const PORTALS: PortalConfig[] = [
     demoPassword: 'student123',
   },
   {
-    role: 'company',
+    role: 'employer',
     label: 'Company',
     tagline: 'Recruit verified engineering talent',
     icon: <Building2 className="w-6 h-6" />,
@@ -65,7 +65,7 @@ const PORTALS: PortalConfig[] = [
     demoPassword: 'company123',
   },
   {
-    role: 'school',
+    role: 'provider',
     label: 'School',
     tagline: 'Monitor cohorts & verify projects',
     icon: <School className="w-6 h-6" />,

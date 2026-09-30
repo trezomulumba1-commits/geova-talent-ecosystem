@@ -71,7 +71,7 @@ export function App() {
         ...prev,
         id: authUser.id,
         name: authUser.name,
-        role: authUser.role === 'company' ? 'Recruiter' : authUser.role === 'school' ? 'Faculty' : 'Student',
+        role: authUser.role === 'employer' ? 'Recruiter' : authUser.role === 'provider' ? 'Faculty' : authUser.role === 'admin' ? 'Administrator' : 'Student',
         title: authUser.title || prev.title,
         avatar: authUser.avatar || prev.avatar,
         about: authUser.bio || prev.about,
@@ -280,10 +280,10 @@ export function App() {
     return (
       <LoginPage
         onAuthSuccess={(role: PortalRole, userName: string) => {
-          const roleMap: Record<PortalRole, UserRole> = { student: 'student', company: 'company', school: 'teacher' };
+          const roleMap: Record<PortalRole, UserRole> = { student: 'student', employer: 'company', provider: 'teacher', admin: 'student' };
           setUserRole(roleMap[role]);
           localStorage.setItem('geova_user_role', roleMap[role]);
-          if (role === 'company' || role === 'school') {
+          if (role === 'employer' || role === 'provider') {
             setEcosystemView('teacher-company-portal');
           } else {
             setEcosystemView('home');
