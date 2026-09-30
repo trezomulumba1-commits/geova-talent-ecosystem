@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     environment: str = "development"
     port: int = 8000
     database_url: str = "sqlite+aiosqlite:///./geova.db"
-git    jwt_secret: str = "geova-super-secret-jwt-key-2026-please-change-in-production"
+    jwt_secret: str = "geova-super-secret-jwt-key-2026-please-change-in-production"
     jwt_expires_days: int = 7
     gemini_api_key: str = ""
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
