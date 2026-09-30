@@ -1,7 +1,7 @@
 // src/services/authService.ts
 // Handles all API calls for login / register / profile
 
-export type PortalRole = 'student' | 'employer' | 'provider' | 'admin';
+export type PortalRole = 'student' | 'company' | 'school';
 
 export interface AuthUser {
   id: string;
