@@ -21,6 +21,7 @@ interface TeacherCompanyPortalViewProps {
   onOpenOpportunity: (oppId: string) => void;
   onOpenStudent: (studentId: string) => void;
   forcedRole?: 'teacher' | 'company';
+  onOpenPostModal?: () => void;
 }
 
 export const TeacherCompanyPortalView: React.FC<TeacherCompanyPortalViewProps> = ({
@@ -29,7 +30,8 @@ export const TeacherCompanyPortalView: React.FC<TeacherCompanyPortalViewProps> =
   students,
   onOpenOpportunity,
   onOpenStudent,
-  forcedRole
+  forcedRole,
+  onOpenPostModal
 }) => {
   const [portalRole, setPortalRole] = useState<'teacher' | 'company'>('teacher');
   const [searchQuery, setSearchQuery] = useState('');
@@ -219,7 +221,10 @@ export const TeacherCompanyPortalView: React.FC<TeacherCompanyPortalViewProps> =
                 <p className="text-xs text-zinc-500">Manage internships and full-time engineering openings</p>
               </div>
 
-              <button className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all">
+              <button
+                onClick={onOpenPostModal}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+              >
                 <Plus className="w-4 h-4" /> Post New Role
               </button>
             </div>

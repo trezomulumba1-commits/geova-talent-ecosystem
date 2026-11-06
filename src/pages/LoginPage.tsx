@@ -14,9 +14,9 @@ import {
   ArrowRight,
   AlertCircle,
   CheckCircle2,
-  Sparkles,
+  Database,
 } from 'lucide-react';
-import { login, register, quickDemoLogin, PortalRole } from '../services/authService';
+import { login, register, PortalRole } from '../services/authService';
 
 type AuthMode = 'login' | 'register';
 
@@ -116,13 +116,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
     setEmail(portal.demoEmail);
     setPassword(portal.demoPassword);
     setError(null);
-  };
-
-  const handleQuickDemoEnter = () => {
-    setError(null);
-    const session = quickDemoLogin(activePortal);
-    setSuccess(`Welcome, ${session.user.name}! Entering ${portal.label} Portal...`);
-    setTimeout(() => onAuthSuccess(activePortal, session.user.name), 600);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -345,31 +338,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
             </button>
           </form>
 
-          {/* Demo Actions */}
+          {/* Real Credentials Autofill for Fast Testing */}
           {authMode === 'login' && (
             <div className="mt-4 pt-3 border-t border-zinc-800/80 flex flex-col gap-2">
               <button
                 type="button"
-                onClick={handleQuickDemoEnter}
-                className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-xs font-semibold border border-zinc-700/80 hover:border-zinc-500 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-                <span>Instant Demo Access ({portal.label})</span>
-              </button>
-              <button
-                type="button"
                 onClick={fillDemo}
-                className="text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors text-center cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold border border-zinc-700/80 hover:border-zinc-500 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group"
               >
-                Or autofill {portal.label} credentials
+                <Database className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
+                <span>Fill Seeded DB Account ({portal.label})</span>
               </button>
             </div>
           )}
         </motion.div>
 
-        {/* Demo hint */}
-        <p className="text-center text-[11px] text-zinc-600 mt-4">
-          Demo · {portal.demoEmail} · {portal.demoPassword}
+        {/* Database notice */}
+        <p className="text-center text-[11px] text-zinc-500 mt-4 flex items-center justify-center gap-1.5">
+          <Database className="w-3 h-3 text-emerald-400" />
+          <span>Connected to live SQLite database. Register or sign in for real persistence.</span>
         </p>
       </div>
     </div>

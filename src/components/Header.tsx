@@ -26,7 +26,7 @@ interface HeaderProps {
   onOpenEditProfile?: () => void;
   onOpenPortalLogin?: () => void;
   userRole: UserRole;
-  onSelectUserRole: (role: UserRole) => void;
+  onSelectUserRole?: (role: UserRole) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -89,23 +89,21 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="bg-zinc-100 dark:bg-[#121212] text-zinc-900 dark:text-zinc-100 px-4 py-1.5 text-xs font-medium flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            {/* Active Portal Badge Button */}
-            <button
-              onClick={onOpenPortalLogin}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer shadow-2xs ${
+            {/* Authenticated Portal Status Badge */}
+            <div
+              className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold border shadow-2xs ${
                 userRole === 'student'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800 hover:bg-indigo-100'
+                  ? 'bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800'
                   : userRole === 'company'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100'
-                  : 'bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-800 hover:bg-purple-100'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
+                  : 'bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-800'
               }`}
-              title="Click to switch your access gateway portal"
             >
               <span>
-                {userRole === 'student' ? '🎓 Student Portal' : userRole === 'company' ? '🏢 Enterprise Recruiter' : '🏫 Academic Faculty'}
+                {userRole === 'student' ? '🎓 Student Portal' : userRole === 'company' ? '🏢 Enterprise Partner' : '🏫 Academic Faculty'}
               </span>
-              <span className="text-[9px] opacity-75 underline uppercase tracking-widest font-mono">Switch</span>
-            </button>
+              <span className="text-[9px] opacity-75 font-mono uppercase tracking-wider">Active</span>
+            </div>
             <span className="hidden md:inline text-zinc-600 dark:text-zinc-400 text-[11px]">
               {userRole === 'student' ? 'Technical Simulation & Talent Portfolio' : userRole === 'company' ? 'Verified Candidate Recruitment & AI Audits' : 'Academic Cohort Management & Grading'}
             </span>
@@ -167,44 +165,26 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Global Desktop Perspective Switcher (Warm Accent Segmented Toggle) */}
-        <div className="hidden lg:flex items-center bg-zinc-100 dark:bg-zinc-900 p-0.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shrink-0">
-          <button
-            onClick={() => onSelectUserRole('student')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              userRole === 'student'
-                ? 'bg-white text-indigo-700 dark:bg-zinc-800 dark:text-indigo-400 shadow-xs border border-zinc-200 dark:border-zinc-700'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-            title="Switch to Student Candidate View"
-          >
-            <User className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-            <span>Candidate Portal</span>
-          </button>
-          <button
-            onClick={() => onSelectUserRole('teacher')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              userRole === 'teacher'
-                ? 'bg-white text-emerald-700 dark:bg-zinc-800 dark:text-emerald-400 shadow-xs border border-zinc-200 dark:border-zinc-700'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-            title="Switch to Teacher Educator View"
-          >
-            <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Educator Portal</span>
-          </button>
-          <button
-            onClick={() => onSelectUserRole('company')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              userRole === 'company'
-                ? 'bg-white text-purple-700 dark:bg-zinc-800 dark:text-purple-400 shadow-xs border border-zinc-200 dark:border-zinc-700'
-                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-            }`}
-            title="Switch to Corporate Partner View"
-          >
-            <Building2 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span>Partner Portal</span>
-          </button>
+        {/* Verified User Gateway Identity */}
+        <div className="hidden lg:flex items-center bg-zinc-100 dark:bg-zinc-900 px-3.5 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 shrink-0 gap-2">
+          {userRole === 'student' && (
+            <div className="flex items-center gap-2 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+              <User className="w-3.5 h-3.5" />
+              <span>Candidate Workspace</span>
+            </div>
+          )}
+          {userRole === 'teacher' && (
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Educator Workspace</span>
+            </div>
+          )}
+          {userRole === 'company' && (
+            <div className="flex items-center gap-2 text-xs font-semibold text-purple-700 dark:text-purple-300">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Corporate Partner Workspace</span>
+            </div>
+          )}
         </div>
 
         {/* Desktop Nav Links (High Contrast Monochrome + Visible Icons) */}
@@ -678,44 +658,12 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-[#18181b] border-b border-zinc-200 dark:border-zinc-800 px-4 pt-2 pb-4 space-y-3 animate-in slide-in-from-top duration-200 shadow-md">
-          {/* Active Side Perspective Toggler for Mobile */}
-          <div className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 space-y-2 border border-zinc-200 dark:border-zinc-700">
-            <div className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Active Side</div>
-            <div className="grid grid-cols-3 gap-1">
-              <button
-                onClick={() => { onSelectUserRole('student'); setMobileMenuOpen(false); }}
-                className={`py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                  userRole === 'student'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Candidate</span>
-              </button>
-              <button
-                onClick={() => { onSelectUserRole('teacher'); setMobileMenuOpen(false); }}
-                className={`py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                  userRole === 'teacher'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                <span>Educator</span>
-              </button>
-              <button
-                onClick={() => { onSelectUserRole('company'); setMobileMenuOpen(false); }}
-                className={`py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                  userRole === 'company'
-                    ? 'bg-purple-600 text-white shadow-xs'
-                    : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5" />
-                <span>Partner</span>
-              </button>
-            </div>
+          {/* Authenticated Workspace Info */}
+          <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 flex items-center justify-between border border-zinc-200 dark:border-zinc-700">
+            <span className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 uppercase tracking-wider">Active Workspace</span>
+            <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+              {userRole === 'student' ? '🎓 Candidate Portal' : userRole === 'teacher' ? '🏫 Educator Portal' : '🏢 Partner Portal'}
+            </span>
           </div>
 
           {/* Mode Switcher */}

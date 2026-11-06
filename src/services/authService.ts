@@ -106,21 +106,15 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 export async function login(email: string, password: string, portal: PortalRole): Promise<AuthResponse> {
-  try {
-    const res = await fetch(`${BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, portal }),
-    });
-    const data = await handleResponse<AuthResponse>(res);
-    localStorage.setItem('geova_auth_token', data.token);
-    localStorage.setItem('geova_auth_user', JSON.stringify(data.user));
-    return data;
-  } catch (err: any) {
-    // If backend is not running or network request fails, fall back gracefully for demo
-    console.warn('[authService] Backend unreachable, using demo session fallback:', err?.message);
-    return createDemoSession(portal, email, email.split('@')[0]);
-  }
+  const res = await fetch(`${BASE}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, portal }),
+  });
+  const data = await handleResponse<AuthResponse>(res);
+  localStorage.setItem('geova_auth_token', data.token);
+  localStorage.setItem('geova_auth_user', JSON.stringify(data.user));
+  return data;
 }
 
 // ─── Register ─────────────────────────────────────────────────────────────────
@@ -132,20 +126,15 @@ export async function register(
   institution?: string,
   title?: string
 ): Promise<AuthResponse> {
-  try {
-    const res = await fetch(`${BASE}/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name, portal, institution, title }),
-    });
-    const data = await handleResponse<AuthResponse>(res);
-    localStorage.setItem('geova_auth_token', data.token);
-    localStorage.setItem('geova_auth_user', JSON.stringify(data.user));
-    return data;
-  } catch (err: any) {
-    console.warn('[authService] Backend unreachable, using demo registration session fallback:', err?.message);
-    return createDemoSession(portal, email, name, institution, title);
-  }
+  const res = await fetch(`${BASE}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name, portal, institution, title }),
+  });
+  const data = await handleResponse<AuthResponse>(res);
+  localStorage.setItem('geova_auth_token', data.token);
+  localStorage.setItem('geova_auth_user', JSON.stringify(data.user));
+  return data;
 }
 
 // ─── Quick Demo Login ─────────────────────────────────────────────────────────

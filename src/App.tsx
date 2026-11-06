@@ -53,20 +53,35 @@ import { CreateCollabModal } from './components/modals/CreateCollabModal';
 import { ConnectModal } from './components/modals/ConnectModal';
 import { SettingsModal } from './components/modals/SettingsModal';
 import { UserProfileModal } from './components/modals/UserProfileModal';
-import { PortalLoginModal } from './components/modals/PortalLoginModal';
+import { PostOpportunityModal } from './components/modals/PostOpportunityModal';
 
 import { LoadingScreen } from './components/common/LoadingScreen';
 import { LoginPage } from './pages/LoginPage';
 import { getCachedUser, logout as authLogout, PortalRole } from './services/authService';
+import {
+  fetchStudents,
+  fetchCompanies,
+  fetchOpportunities,
+  fetchCollabs,
+  createCollabPost,
+  createOpportunity,
+  toggleCollabInterest,
+  sendConnectionRequest,
+} from './services/apiService';
 
 export function App() {
   const [appLoading, setAppLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getCachedUser());
 
-  // Sync cached auth user into currentUser on first load
+  // Sync cached auth user into currentUser on first load with strict RBAC
   useEffect(() => {
     const authUser = getCachedUser();
     if (authUser && isAuthenticated) {
+      const mappedRole: UserRole =
+        authUser.role === 'employer' ? 'company' : authUser.role === 'provider' ? 'teacher' : 'student';
+      setUserRole(mappedRole);
+      localStorage.setItem('geova_user_role', mappedRole);
+
       setCurrentUser(prev => ({
         ...prev,
         id: authUser.id,
@@ -76,6 +91,13 @@ export function App() {
         avatar: authUser.avatar || prev.avatar,
         about: authUser.bio || prev.about,
       }));
+
+      // Enforce portal isolation
+      if (mappedRole === 'student') {
+        setEcosystemView(prev => (prev === 'teacher-company-portal' || prev === 'global-analytics' ? 'home' : prev));
+      } else {
+        setEcosystemView(prev => (prev === 'home' || prev === 'squads-progress' || prev === 'student-profile' ? 'teacher-company-portal' : prev));
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
@@ -124,6 +146,62 @@ export function App() {
   const [squads, setSquads] = useState<ProjectSquad[]>(INITIAL_PROJECT_SQUADS);
   const [readinessScore, setReadinessScore] = useState<number>(78);
 
+  // Fetch real database records from FastAPI / SQLite on initial mount
+  useEffect(() => {
+    let active = true;
+    async function loadLiveData() {
+      try {
+        const [loadedStudents, loadedCompanies, loadedOpps, loadedCollabs] = await Promise.all([
+          fetchStudents().catch(() => []),
+          fetchCompanies().catch(() => []),
+          fetchOpportunities().catch(() => []),
+          fetchCollabs().catch(() => []),
+        ]);
+
+        if (active) {
+          if (loadedStudents.length > 0) {
+            setStudents(loadedStudents);
+            const allProjects: Project[] = [];
+            loadedStudents.forEach(st => {
+              if (st.projects && st.projects.length > 0) {
+                st.projects.forEach(p => {
+                  allProjects.push({
+                    id: p.id,
+                    title: p.title,
+                    tagline: p.description,
+                    category: (p.type === 'Mobile UI' ? 'Mobile' : 'Web') as any,
+                    status: 'Validated',
+                    image: p.image,
+                    creator: { name: st.name, role: st.role, avatar: st.avatar },
+                    tags: st.skills || ['Full-Stack'],
+                    problem: p.description,
+                    solution: p.description,
+                    keyFeatures: ['Live Data Architecture', 'Production Ready', 'Verified Capability'],
+                    contribution: 'Architecture & Full-Stack Implementation',
+                    technologies: st.skills || ['React', 'TypeScript', 'Node.js'],
+                    gallery: [p.image],
+                  });
+                });
+              }
+            });
+            if (allProjects.length > 0) {
+              setProjects(allProjects);
+            }
+          }
+          if (loadedCompanies.length > 0) setCompanies(loadedCompanies);
+          if (loadedOpps.length > 0) setOpportunities(loadedOpps);
+          if (loadedCollabs.length > 0) setCollabs(loadedCollabs);
+        }
+      } catch (err) {
+        console.error('Failed to load live database records:', err);
+      }
+    }
+    loadLiveData();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const handleUpdateTaskStatus = (squadId: string, taskId: string, newStatus: 'todo' | 'in-progress' | 'completed') => {
     setSquads(prev =>
       prev.map(s => {
@@ -158,10 +236,10 @@ export function App() {
   // Modal states
   const [applyOpp, setApplyOpp] = useState<Opportunity | null>(null);
   const [createCollabOpen, setCreateCollabOpen] = useState(false);
-  const [connectData, setConnectData] = useState<{ name: string; role?: string } | null>(null);
+  const [connectData, setConnectData] = useState<{ id?: string; name: string; role?: string } | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
-  const [portalLoginOpen, setPortalLoginOpen] = useState(false);
+  const [postOppOpen, setPostOppOpen] = useState(false);
 
   // Authenticated dynamic user profile state
   const [currentUser, setCurrentUser] = useState<Student>(() => {
@@ -220,7 +298,7 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleToggleCollabInterest = (collabId: string) => {
+  const handleToggleCollabInterest = async (collabId: string) => {
     setCollabs(prev =>
       prev.map(c => {
         if (c.id === collabId) {
@@ -234,6 +312,12 @@ export function App() {
         return c;
       })
     );
+
+    try {
+      await toggleCollabInterest(collabId);
+    } catch (err) {
+      console.warn('Could not record collab interest in DB:', err);
+    }
   };
 
   const handleToggleResourceComplete = (resourceId: string) => {
@@ -257,20 +341,50 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleAddCollab = (postData: { title: string; phase: string; description: string; tags: string[] }) => {
-    const newPost: CollabPost = {
-      id: `collab-${Date.now()}`,
-      authorName: currentUser.name,
-      authorAvatar: currentUser.avatar,
-      phase: postData.phase,
-      title: postData.title,
-      description: postData.description,
-      tags: postData.tags,
-      interestedCount: 1,
-      userInterested: true
-    };
-    setCollabs(prev => [newPost, ...prev]);
-    setCreateCollabOpen(false);
+  const handleAddCollab = async (postData: { title: string; phase: string; description: string; tags: string[] }) => {
+    try {
+      const created = await createCollabPost(postData);
+      setCollabs(prev => [created, ...prev]);
+    } catch (err) {
+      console.warn('Backend creation failed, creating local fallback:', err);
+      const newPost: CollabPost = {
+        id: `collab-${Date.now()}`,
+        authorName: currentUser.name,
+        authorAvatar: currentUser.avatar,
+        phase: postData.phase,
+        title: postData.title,
+        description: postData.description,
+        tags: postData.tags,
+        interestedCount: 1,
+        userInterested: true
+      };
+      setCollabs(prev => [newPost, ...prev]);
+    } finally {
+      setCreateCollabOpen(false);
+    }
+  };
+
+  const handleCreateOpportunity = async (data: {
+    title: string;
+    type: string;
+    location: string;
+    stipend: string;
+    tags: string[];
+    overview: string;
+  }) => {
+    const opp = await createOpportunity({
+      companyId: companies[0]?.id || 'nebula-ai',
+      companyName: companies[0]?.name || currentUser.name || 'Enterprise Partner',
+      companyLogo: companies[0]?.logo || currentUser.avatar || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80',
+      title: data.title,
+      type: data.type,
+      location: data.location,
+      duration: '3-6 Months',
+      stipend: data.stipend,
+      tags: data.tags,
+      overview: data.overview,
+    });
+    setOpportunities(prev => [opp, ...prev]);
   };
 
   const handleResetData = () => {
@@ -334,20 +448,7 @@ export function App() {
         currentUser={currentUser}
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenEditProfile={() => setUserProfileModalOpen(true)}
-        onOpenPortalLogin={() => setPortalLoginOpen(true)}
         userRole={userRole}
-        onSelectUserRole={role => {
-          setUserRole(role);
-          setMode('ecosystem');
-          if (role === 'teacher') {
-            setEcosystemView('teacher-company-portal');
-          } else if (role === 'company') {
-            setEcosystemView('teacher-company-portal');
-          } else {
-            setEcosystemView('home');
-          }
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
       />
 
       {/* Main Content Area */}
@@ -392,7 +493,7 @@ export function App() {
                 onOpenStudent={handleOpenStudent}
                 onOpenCompany={handleOpenCompany}
                 onOpenOpportunity={handleOpenOpportunity}
-                onConnectStudent={s => setConnectData({ name: s.name, role: s.role })}
+                onConnectStudent={s => setConnectData({ id: s.id, name: s.name, role: s.role })}
                 onToggleCollabInterest={handleToggleCollabInterest}
                 onStartArena={() => {
                   setMode('prep');
@@ -421,7 +522,7 @@ export function App() {
                 onOpenProject={handleOpenProject}
                 onOpenCompany={handleOpenCompany}
                 onOpenOpportunity={handleOpenOpportunity}
-                onConnectStudent={s => setConnectData({ name: s.name, role: s.role })}
+                onConnectStudent={s => setConnectData({ id: s.id, name: s.name, role: s.role })}
               />
             )}
 
@@ -442,7 +543,7 @@ export function App() {
                 student={activeStudent}
                 projects={projects}
                 onOpenProject={handleOpenProject}
-                onConnectStudent={s => setConnectData({ name: s.name, role: s.role })}
+                onConnectStudent={s => setConnectData({ id: s.id, name: s.name, role: s.role })}
                 onNavigate={view => setEcosystemView(view)}
               />
             )}
@@ -496,6 +597,7 @@ export function App() {
                 onOpenOpportunity={handleOpenOpportunity}
                 onOpenStudent={handleOpenStudent}
                 forcedRole={userRole === 'student' ? undefined : (userRole as 'teacher' | 'company')}
+                onOpenPostModal={() => setPostOppOpen(true)}
               />
             )}
 
@@ -613,7 +715,14 @@ export function App() {
           recipientName={connectData.name}
           recipientRole={connectData.role}
           onClose={() => setConnectData(null)}
-          onSend={_msg => {
+          onSend={async msg => {
+            if ((connectData as any).id) {
+              try {
+                await sendConnectionRequest((connectData as any).id, msg);
+              } catch (e) {
+                console.warn('Could not record connection in DB:', e);
+              }
+            }
             setConnectData(null);
           }}
         />
@@ -636,21 +745,12 @@ export function App() {
         />
       )}
 
-      {portalLoginOpen && (
-        <PortalLoginModal
-          currentRole={userRole}
-          onSelectRole={role => {
-            setUserRole(role);
-            localStorage.setItem('geova_user_role', role);
-            setMode('ecosystem');
-            if (role === 'teacher' || role === 'company') {
-              setEcosystemView('teacher-company-portal');
-            } else {
-              setEcosystemView('home');
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onClose={() => setPortalLoginOpen(false)}
+      {postOppOpen && (
+        <PostOpportunityModal
+          companyName={companies[0]?.name || currentUser.name}
+          companyLogo={companies[0]?.logo || currentUser.avatar}
+          onClose={() => setPostOppOpen(false)}
+          onSubmit={handleCreateOpportunity}
         />
       )}
     </div>
