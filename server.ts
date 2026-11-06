@@ -4,14 +4,48 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import http from "http";
+import https from "https";
 
 dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "geova-super-secret-jwt-key-2026";
+// When FASTAPI_URL is set, proxy all /api/* calls to the FastAPI backend.
+const FASTAPI_URL = process.env.FASTAPI_URL ? `https://${process.env.FASTAPI_URL}` : null;
 
 app.use(express.json({ limit: "10mb" }));
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FASTAPI PROXY (production mode when FASTAPI_URL is set)
+// ─────────────────────────────────────────────────────────────────────────────
+if (FASTAPI_URL) {
+  const fastapiBase = new URL(FASTAPI_URL);
+  app.use("/api", (req, res) => {
+    const isHttps = fastapiBase.protocol === "https:";
+    const transport = isHttps ? https : http;
+    const options = {
+      hostname: fastapiBase.hostname,
+      port: fastapiBase.port || (isHttps ? 443 : 80),
+      path: "/api" + req.url,
+      method: req.method,
+      headers: { ...req.headers, host: fastapiBase.hostname },
+    };
+    const proxyReq = transport.request(options, (proxyRes) => {
+      res.writeHead(proxyRes.statusCode || 502, proxyRes.headers);
+      proxyRes.pipe(res, { end: true });
+    });
+    proxyReq.on("error", () => res.status(502).json({ error: "Backend unavailable" }));
+    if (req.body && Object.keys(req.body).length) {
+      const body = JSON.stringify(req.body);
+      proxyReq.setHeader("Content-Length", Buffer.byteLength(body));
+      proxyReq.write(body);
+    }
+    proxyReq.end();
+  });
+  console.log(`🔀 API proxy active → ${FASTAPI_URL}`);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AUTH HELPERS

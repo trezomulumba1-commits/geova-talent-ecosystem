@@ -1,11 +1,48 @@
 services:
+  # ── Frontend (React + Express static server) ─────────────────────────────────
   - type: web
-    name: geova-talent-ecosystem
+    name: geova-frontend
     env: node
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: JWT_SECRET
+        value: geova-secure-jwt-2026-production
       - key: GEMINI_API_KEY
         sync: false
+      - key: FASTAPI_URL
+        fromService:
+          type: web
+          name: geova-backend
+          property: host
+      - key: PORT
+        value: 10000
+
+  # ── Backend (FastAPI + SQLite/Postgres) ───────────────────────────────────────
+  - type: web
+    name: geova-backend
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install uv && uv sync
+    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./geova.db
+      - key: PERSISTENCE
+        value: db
+      - key: DB_AUTO_CREATE
+        value: "true"
+      - key: JWT_SECRET
+        value: geova-secure-jwt-2026-production
+      - key: JWT_EXPIRES_DAYS
+        value: "7"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: PORT
+        value: 10000
