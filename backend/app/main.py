@@ -5,7 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.errors import register_error_handlers
-from app.routers import ai, auth, opportunities, profiles, users
+from app.routers import (
+    admin,
+    ai,
+    auth,
+    collabs,
+    connections,
+    opportunities,
+    profiles,
+    users,
+)
 
 app = FastAPI(title=settings.app_name, version="0.1.0")
 
@@ -23,6 +32,9 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(profiles.router)
 app.include_router(opportunities.router)
+app.include_router(connections.router)
+app.include_router(collabs.router)
+app.include_router(admin.router)
 app.include_router(ai.router)
 
 

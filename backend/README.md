@@ -10,9 +10,9 @@ to a persistent database and business logic.
 |-----------|------------------------------------------|
 | Runtime   | Python 3.12 + FastAPI + uvicorn          |
 | Tooling   | `uv` (venv + deps, see `uv.lock`)        |
-| ORM       | SQLAlchemy 2.0 (async)                   |
+| ORM       | SQLAlchemy 2.0 (sync; runs in FastAPI's threadpool) |
 | Migrations| Alembic                                 |
-| Database  | SQLite (`aiosqlite`) for dev; Supabase PostgreSQL (`asyncpg`) later |
+| Database  | SQLite for dev; Supabase PostgreSQL later (async migration is a later optimisation) |
 | Auth      | PyJWT + bcrypt (self-managed, matches the existing `/api/auth/*` contract) |
 | Validation| Pydantic v2 + auto OpenAPI docs          |
 | AI        | google-genai (proxy to existing `/api/gemini/*`) |
@@ -35,6 +35,17 @@ npm run backend:dev        # or: cd backend && uv run uvicorn app.main:app --rel
 - API health:  http://localhost:8000/api/health
 - Swagger:     http://localhost:8000/docs
 
+The DB schema is created and seeded automatically on first start. For controlled
+schema changes, apply migrations instead:
+
+```bash
+cd backend
+uv run alembic upgrade head
+```
+
+`PERSISTENCE=db` (default) uses SQLAlchemy; `PERSISTENCE=memory` keeps the
+original in-memory stores (tests run in this mode).
+
 The legacy Node dev server is still available as `npm run dev:legacy` and remains
 the production entrypoint (`npm start`) until the deployment stage (Stage 12).
 
@@ -56,13 +67,17 @@ uv run pytest
 ## Env
 
 ```
-DATABASE_URL=sqlite+aiosqlite:///./geova.db   # later: postgresql+asyncpg://...
+DATABASE_URL=sqlite:///./geova.db   # later: postgresql+psycopg://...
+PERSISTENCE=db                      # db | memory
 JWT_SECRET=change-me
 JWT_EXPIRES_DAYS=7
 GEMINI_API_KEY=your_gemini_api_key
 CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 PORT=8000
 ```
+
+Supabase Postgres needs a sync driver (`psycopg[binary]`) for the current
+SQLAlchemy setup, or a switch to async SQLAlchemy + `asyncpg`.
 
 ## Decision log
 
@@ -80,6 +95,8 @@ PORT=8000
   Supabase is used only as a PostgreSQL host, wired up at deployment stage.
 - **Dev DB = SQLite**, production DB = Supabase Postgres. Schemas/migrations are
   Postgres-compatible (Alembic handles both); only `DATABASE_URL` changes.
+  Stores are selected by `PERSISTENCE` (`db` default, `memory` for tests), so the
+  API contract is identical in both modes.
 - **Scope = "goal"**: admin, opportunity management and analytics on the backend,
   plus a minimal "post opportunity" modal in the frontend. Forum and squads stay
   frontend-only for now.
@@ -90,8 +107,8 @@ PORT=8000
 
 0. Preparation (this doc) ✅
 1. Project setup (FastAPI skeleton, health, CORS, Vite proxy) ✅
-2. Database architecture (SQLAlchemy models, Alembic, seed) — on hold; the
-   in-memory `app/store.py` is the active backend and keeps the same interface
+2. Database architecture (SQLAlchemy models, Alembic, seed) ✅
+   `app/db.py` · `app/db_models.py` · `app/db_stores.py` · `alembic/`
 3. Authentication (bcrypt + JWT, register/login/me/logout/profile, role guards) ✅
    AI endpoints (`/api/gemini/*`) ported to FastAPI ✅
 4. User/profile system + discover search/filter ✅
@@ -102,8 +119,12 @@ PORT=8000
    `GET /api/opportunities/{id}` · `POST` · `PATCH` · `DELETE` · `POST /{id}/status`
    `GET /api/opportunities/mine` (employer + admin only; drafts hidden from public)
 6. Search/filtering + pagination across discover endpoints
-7. Networking (connections, collabs + interest)
-8. Administration (user management, moderation, analytics)
+7. Networking (connections, collabs + interest) ✅
+   `GET|POST /api/connections` · `POST /{id}/respond` · `DELETE /{id}`
+   `GET|POST /api/collabs` · `GET|PATCH|DELETE /{id}` · `POST /{id}/interest`
+8. Administration (user management, moderation, analytics) ✅
+   `GET|PATCH|DELETE /api/admin/users` · `GET /api/admin/opportunities` ·
+   `POST /api/admin/opportunities/{id}/moderate` · `GET /api/admin/analytics`
 9. Frontend ↔ API integration (swap mock state, post-opportunity modal)
 10. Validation & security hardening
 11. Testing & coverage

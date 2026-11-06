@@ -2,12 +2,17 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     app_name: str = "GEOVA Backend"
     environment: str = "development"
     port: int = 8000
     database_url: str = "sqlite+aiosqlite:///./geova.db"
+    # "db" persists through SQLAlchemy; "memory" keeps the original stores.
+    persistence: str = "db"
+    db_auto_create: bool = True
     jwt_secret: str = "geova-super-secret-jwt-key-2026-please-change-in-production"
     jwt_expires_days: int = 7
     gemini_api_key: str = ""

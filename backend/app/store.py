@@ -5,6 +5,7 @@ touching routers or services. Seed accounts mirror the original Node server's
 demo credentials with the new role enum (student | employer | provider | admin).
 """
 
+from app.config import settings
 from app.security import hash_password
 
 ROLES = ("student", "employer", "provider", "admin")
@@ -64,6 +65,55 @@ def _seed_hash(password: str) -> str:
     return _SEED_HASH_CACHE[password]
 
 
+USER_SEED = [
+    {
+        "id": "usr-student-001",
+        "email": "student@geova.ai",
+        "password": "student123",
+        "role": "student",
+        "name": "Alex Mwansa",
+        "title": "Full-Stack Engineer",
+        "institution": "Stanford University",
+        "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
+        "bio": "Building distributed systems and open-source tools.",
+        "skills": ["TypeScript", "React", "Node.js", "Python", "System Design"],
+    },
+    {
+        "id": "usr-employer-001",
+        "email": "recruiter@geova.ai",
+        "password": "company123",
+        "role": "employer",
+        "name": "Sophia Chen",
+        "title": "Senior Technical Recruiter",
+        "institution": "Nebula AI",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+        "bio": "Sourcing elite engineering talent for hyper-growth AI startups.",
+    },
+    {
+        "id": "usr-provider-001",
+        "email": "faculty@geova.ai",
+        "password": "school123",
+        "role": "provider",
+        "name": "Prof. Damilola Adeyemi",
+        "title": "Associate Professor of CS",
+        "institution": "MIT EECS Department",
+        "avatar": "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&q=80&w=400",
+        "bio": "Teaching software engineering & distributed systems since 2012.",
+    },
+    {
+        "id": "usr-admin-001",
+        "email": "admin@geova.ai",
+        "password": "admin123",
+        "role": "admin",
+        "name": "Platform Admin",
+        "title": "Administrator",
+        "institution": "GEOVA",
+        "avatar": "https://ui-avatars.com/api/?name=Admin&background=random&size=200",
+        "bio": "Oversees users and opportunities on the GEOVA platform.",
+    },
+]
+
+
 class UserStore:
     def __init__(self) -> None:
         self._users: dict[str, UserRecord] = {}
@@ -77,54 +127,7 @@ class UserStore:
         import datetime as _dt
 
         now = lambda: _dt.datetime.now(_dt.timezone.utc).isoformat()  # noqa: E731
-        seed = [
-            {
-                "id": "usr-student-001",
-                "email": "student@geova.ai",
-                "password": "student123",
-                "role": "student",
-                "name": "Alex Mwansa",
-                "title": "Full-Stack Engineer",
-                "institution": "Stanford University",
-                "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400",
-                "bio": "Building distributed systems and open-source tools.",
-                "skills": ["TypeScript", "React", "Node.js", "Python", "System Design"],
-            },
-            {
-                "id": "usr-employer-001",
-                "email": "recruiter@geova.ai",
-                "password": "company123",
-                "role": "employer",
-                "name": "Sophia Chen",
-                "title": "Senior Technical Recruiter",
-                "institution": "Nebula AI",
-                "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-                "bio": "Sourcing elite engineering talent for hyper-growth AI startups.",
-            },
-            {
-                "id": "usr-provider-001",
-                "email": "faculty@geova.ai",
-                "password": "school123",
-                "role": "provider",
-                "name": "Prof. Damilola Adeyemi",
-                "title": "Associate Professor of CS",
-                "institution": "MIT EECS Department",
-                "avatar": "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&q=80&w=400",
-                "bio": "Teaching software engineering & distributed systems since 2012.",
-            },
-            {
-                "id": "usr-admin-001",
-                "email": "admin@geova.ai",
-                "password": "admin123",
-                "role": "admin",
-                "name": "Platform Admin",
-                "title": "Administrator",
-                "institution": "GEOVA",
-                "avatar": "https://ui-avatars.com/api/?name=Admin&background=random&size=200",
-                "bio": "Oversees users and opportunities on the GEOVA platform.",
-            },
-        ]
-        for s in seed:
+        for s in USER_SEED:
             rec = UserRecord(
                 **{k: v for k, v in s.items() if k != "password"},
                 password_hash=_seed_hash(s["password"]),
@@ -140,6 +143,15 @@ class UserStore:
 
     def list_all(self) -> list[UserRecord]:
         return list(self._users.values())
+
+    def get_by_id(self, user_id: str) -> UserRecord | None:
+        for user in self._users.values():
+            if user.id == user_id:
+                return user
+        return None
+
+    def delete(self, email: str) -> bool:
+        return self._users.pop(email.lower().strip(), None) is not None
 
     def upsert(self, user: UserRecord) -> UserRecord:
         self._users[user.email] = user
@@ -170,4 +182,9 @@ class UserStore:
         return self.upsert(rec)
 
 
-user_store = UserStore()
+if settings.persistence == "db":
+    from app.db_stores import DbUserStore
+
+    user_store = DbUserStore(USER_SEED)
+else:
+    user_store = UserStore()

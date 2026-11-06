@@ -6,6 +6,7 @@ Swapped for SQLAlchemy in Stage 2; routers only touch these methods.
 
 from datetime import datetime, timezone
 
+from app.config import settings
 from app.errors import ApiError
 from app.profiles import profile_store
 from app.store import UserRecord
@@ -38,9 +39,21 @@ OPPORTUNITY_SEED = [
             {"step": 4, "title": "Offer", "subtitle": "Welcome aboard"},
         ],
         "benefits": [
-            {"icon": "payments", "title": "Competitive Stipend", "description": "$5k – $7k / month"},
-            {"icon": "supervisor_account", "title": "Direct Mentorship", "description": "1:1 with Senior ML Engineers"},
-            {"icon": "schedule", "title": "Flexible Hours", "description": "Work when you are most productive"},
+            {
+                "icon": "payments",
+                "title": "Competitive Stipend",
+                "description": "$5k – $7k / month",
+            },
+            {
+                "icon": "supervisor_account",
+                "title": "Direct Mentorship",
+                "description": "1:1 with Senior ML Engineers",
+            },
+            {
+                "icon": "schedule",
+                "title": "Flexible Hours",
+                "description": "Work when you are most productive",
+            },
         ],
         "hiringManager": {
             "name": "Sarah Jenkins",
@@ -66,17 +79,33 @@ OPPORTUNITY_SEED = [
         "overview": "Join our research team to build production recommendation engines and predictive churn modeling pipelines for enterprise partners.",
         "requirements": {
             "techStack": ["SQL", "R", "Python", "Statistical Modeling"],
-            "coreCompetencies": ["Experimental design", "A/B testing methodology", "Clear data visualization"],
+            "coreCompetencies": [
+                "Experimental design",
+                "A/B testing methodology",
+                "Clear data visualization",
+            ],
         },
         "processSteps": [
             {"step": 1, "title": "Applied", "subtitle": "Resume & code sample"},
             {"step": 2, "title": "Take Home", "subtitle": "Modeling case study"},
-            {"step": 3, "title": "Panel Review", "subtitle": "Present findings to team"},
+            {
+                "step": 3,
+                "title": "Panel Review",
+                "subtitle": "Present findings to team",
+            },
             {"step": 4, "title": "Offer", "subtitle": "Join full-time"},
         ],
         "benefits": [
-            {"icon": "payments", "title": "Competitive Compensation", "description": "$110k - $130k + Equity"},
-            {"icon": "health_and_safety", "title": "Comprehensive Health", "description": "Medical, Dental, Vision 100% covered"},
+            {
+                "icon": "payments",
+                "title": "Competitive Compensation",
+                "description": "$110k - $130k + Equity",
+            },
+            {
+                "icon": "health_and_safety",
+                "title": "Comprehensive Health",
+                "description": "Medical, Dental, Vision 100% covered",
+            },
         ],
         "hiringManager": {
             "name": "Jordan Smith",
@@ -102,7 +131,10 @@ OPPORTUNITY_SEED = [
         "overview": "Rebuild our embedded banking dashboard as a modular design system. You own component architecture, accessibility and performance budgets end to end.",
         "requirements": {
             "techStack": ["React", "TypeScript", "CSS Architecture"],
-            "coreCompetencies": ["Accessible component design", "Frontend performance tuning"],
+            "coreCompetencies": [
+                "Accessible component design",
+                "Frontend performance tuning",
+            ],
         },
         "processSteps": [
             {"step": 1, "title": "Applied", "subtitle": "Portfolio review"},
@@ -110,7 +142,11 @@ OPPORTUNITY_SEED = [
             {"step": 3, "title": "Offer", "subtitle": "Scoped contract"},
         ],
         "benefits": [
-            {"icon": "schedule", "title": "Flexible Hours", "description": "Async-first collaboration"},
+            {
+                "icon": "schedule",
+                "title": "Flexible Hours",
+                "description": "Async-first collaboration",
+            },
         ],
         "hiringManager": {
             "name": "Priya Raman",
@@ -136,7 +172,10 @@ OPPORTUNITY_SEED = [
         "overview": "Help our clinical community succeed: answer practitioner questions, run weekly onboarding office hours and surface feedback to the product team.",
         "requirements": {
             "techStack": [],
-            "coreCompetencies": ["Clear written communication", "Empathy and follow-through"],
+            "coreCompetencies": [
+                "Clear written communication",
+                "Empathy and follow-through",
+            ],
         },
         "processSteps": [
             {"step": 1, "title": "Applied", "subtitle": "Short intro"},
@@ -144,7 +183,11 @@ OPPORTUNITY_SEED = [
             {"step": 3, "title": "Offer", "subtitle": "Onboarding week"},
         ],
         "benefits": [
-            {"icon": "groups", "title": "Real Impact", "description": "Direct line to product team"},
+            {
+                "icon": "groups",
+                "title": "Real Impact",
+                "description": "Direct line to product team",
+            },
         ],
         "hiringManager": {
             "name": "Elena Rodriguez",
@@ -168,7 +211,10 @@ OPPORTUNITY_SEED = [
         "stipend": "$6k / month",
         "tags": ["PyTorch", "Quantization"],
         "overview": "Draft listing — quantization and distillation research on production inference stacks.",
-        "requirements": {"techStack": ["PyTorch"], "coreCompetencies": ["Model benchmarking"]},
+        "requirements": {
+            "techStack": ["PyTorch"],
+            "coreCompetencies": ["Model benchmarking"],
+        },
         "processSteps": [{"step": 1, "title": "Applied", "subtitle": "CV and GitHub"}],
         "benefits": [],
         "hiringManager": {
@@ -224,7 +270,11 @@ class OpportunityStore:
             found = [o for o in found if needle in (o.get("location") or "").lower()]
         if tag:
             needle = tag.strip().lower()
-            found = [o for o in found if any(needle == t.lower() for t in o.get("tags") or [])]
+            found = [
+                o
+                for o in found
+                if any(needle == t.lower() for t in o.get("tags") or [])
+            ]
         if q:
             needle = q.strip().lower()
             found = [
@@ -247,7 +297,9 @@ class OpportunityStore:
         if not found or found[0] != "company":
             return []
         company_id = found[1]["id"]
-        return self._sorted([o for o in self._items.values() if o.get("companyId") == company_id])
+        return self._sorted(
+            [o for o in self._items.values() if o.get("companyId") == company_id]
+        )
 
     def company_id_for(self, user: UserRecord, requested: str | None = None) -> str:
         if user.role == "admin":
@@ -270,7 +322,11 @@ class OpportunityStore:
         if record.get("ownerUserId") == user.id:
             return True
         found = profile_store.get_for_user(user.id)
-        return bool(found and found[0] == "company" and found[1]["id"] == record.get("companyId"))
+        return bool(
+            found
+            and found[0] == "company"
+            and found[1]["id"] == record.get("companyId")
+        )
 
     def create(self, user: UserRecord, payload: dict) -> dict:
         company_id = self.company_id_for(user, payload.get("companyId"))
@@ -309,4 +365,9 @@ class OpportunityStore:
         self._items.pop(opportunity_id, None)
 
 
-opportunity_store = OpportunityStore()
+if settings.persistence == "db":
+    from app.db_stores import DbOpportunityStore
+
+    opportunity_store = DbOpportunityStore(OPPORTUNITY_SEED)
+else:
+    opportunity_store = OpportunityStore()

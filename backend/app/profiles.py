@@ -4,8 +4,13 @@ Seeded from the frontend's mockData so the discover screens stay populated.
 Swapped for SQLAlchemy in Stage 2; routers only touch these methods.
 """
 
+from typing import TypeVar
+
+from app.config import settings
 from app.profile_schemas import CompanyProfile, OwnProfile, ProfileLinks
 from app.store import UserRecord, user_store
+
+T = TypeVar("T")
 
 STUDENT_SEED = [
     {
@@ -18,15 +23,39 @@ STUDENT_SEED = [
         "available": True,
         "statusText": "Available for opportunities",
         "about": "Passionate about crafting intuitive and accessible user interfaces. Bridging the gap between design and engineering to build products that look great and function seamlessly. Experienced in React, Vue, and modern CSS frameworks, with a strong focus on component-driven architecture.",
-        "skills": ["React", "TypeScript", "Tailwind CSS", "Figma", "Vue.js", "UI/UX Design", "Web Accessibility"],
+        "skills": [
+            "React",
+            "TypeScript",
+            "Tailwind CSS",
+            "Figma",
+            "Vue.js",
+            "UI/UX Design",
+            "Web Accessibility",
+        ],
         "university": "Stanford University",
         "year": "Year 4",
         "projectsCount": 8,
         "projects": [
-            {"id": "ecotrack", "title": "EcoTrack Dashboard", "description": "A comprehensive dashboard for tracking personal carbon footprints with real-time data visualization and gamified sustainability challenges.", "type": "Web App", "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"},
-            {"id": "mediconnect", "title": "MediConnect App", "description": "Accessible patient portal app focusing on clear typography and high contrast for elderly users navigating their healthcare records.", "type": "Mobile UI", "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80"},
+            {
+                "id": "ecotrack",
+                "title": "EcoTrack Dashboard",
+                "description": "A comprehensive dashboard for tracking personal carbon footprints with real-time data visualization and gamified sustainability challenges.",
+                "type": "Web App",
+                "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
+            },
+            {
+                "id": "mediconnect",
+                "title": "MediConnect App",
+                "description": "Accessible patient portal app focusing on clear typography and high contrast for elderly users navigating their healthcare records.",
+                "type": "Mobile UI",
+                "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
+            },
         ],
-        "links": {"github": "https://github.com/alexmwansa", "linkedin": "https://linkedin.com/in/alexmwansa", "website": "https://alexmwansa.dev"},
+        "links": {
+            "github": "https://github.com/alexmwansa",
+            "linkedin": "https://linkedin.com/in/alexmwansa",
+            "website": "https://alexmwansa.dev",
+        },
         "userId": "usr-student-001",
     },
     {
@@ -41,7 +70,11 @@ STUDENT_SEED = [
         "about": "Specializing in design systems, micro-interactions, and human-centered design for fintech and consumer mobile apps.",
         "skills": ["Figma", "UI/UX", "Prototyping", "Design Systems", "User Research"],
         "projectsCount": 8,
-        "links": {"github": "https://github.com/marcusdesign", "linkedin": "https://linkedin.com/in/marcuschen", "website": "https://marcuschen.studio"},
+        "links": {
+            "github": "https://github.com/marcusdesign",
+            "linkedin": "https://linkedin.com/in/marcuschen",
+            "website": "https://marcuschen.studio",
+        },
     },
     {
         "id": "sarah-jenkins",
@@ -55,7 +88,10 @@ STUDENT_SEED = [
         "about": "Building resilient backend APIs and reactive frontend applications. Passionate about PostgreSQL query tuning and microservices.",
         "skills": ["React", "Node.js", "PostgreSQL", "TypeScript", "Docker", "GraphQL"],
         "projectsCount": 12,
-        "links": {"github": "https://github.com/sarahjenkins", "linkedin": "https://linkedin.com/in/sarahjenkins-dev"},
+        "links": {
+            "github": "https://github.com/sarahjenkins",
+            "linkedin": "https://linkedin.com/in/sarahjenkins-dev",
+        },
     },
     {
         "id": "david-osei",
@@ -67,9 +103,19 @@ STUDENT_SEED = [
         "available": True,
         "statusText": "Available",
         "about": "Predictive modeling, deep learning architectures, and big data pipelines for NLP and computer vision.",
-        "skills": ["Python", "Machine Learning", "SQL", "PyTorch", "Pandas", "Scikit-Learn"],
+        "skills": [
+            "Python",
+            "Machine Learning",
+            "SQL",
+            "PyTorch",
+            "Pandas",
+            "Scikit-Learn",
+        ],
         "projectsCount": 5,
-        "links": {"github": "https://github.com/davidosei", "linkedin": "https://linkedin.com/in/davidosei"},
+        "links": {
+            "github": "https://github.com/davidosei",
+            "linkedin": "https://linkedin.com/in/davidosei",
+        },
     },
     {
         "id": "elena-rodriguez",
@@ -144,7 +190,7 @@ COMPANY_SEED = [
 ]
 
 
-def paginate(items: list[dict], page: int, page_size: int) -> tuple[list[dict], int]:
+def paginate(items: list[T], page: int, page_size: int) -> tuple[list[T], int]:
     total = len(items)
     start = (page - 1) * page_size
     return items[start : start + page_size], total
@@ -284,6 +330,33 @@ class ProfileStore:
         user_store.upsert(user)
         return "company" if record["id"] in self._companies else "student", record
 
+    def set_flags(
+        self,
+        profile_id: str,
+        *,
+        verified: bool | None = None,
+        available: bool | None = None,
+    ) -> dict | None:
+        record = self.get(profile_id)
+        if not record:
+            return None
+        if verified is not None:
+            record["verified"] = verified
+        if available is not None:
+            record["available"] = available
+        return record
+
+    def delete_for_user(self, user_id: str) -> bool:
+        for store in (self._students, self._companies):
+            for profile_id, record in list(store.items()):
+                if (
+                    record.get("userId") == user_id
+                    or record.get("ownerUserId") == user_id
+                ):
+                    del store[profile_id]
+                    return True
+        return False
+
     def own_profile(self, user: UserRecord) -> OwnProfile:
         kind, record = self.ensure_own(user)
         university = record.get("university") or user.institution
@@ -295,7 +368,7 @@ class ProfileStore:
             title=record.get("title") or user.title,
             institution=user.institution,
             avatar=record.get("avatar") or user.avatar,
-            about=record.get("about") if "about" in record else user.bio,
+            about=(record.get("about") if "about" in record else user.bio) or "",
             skills=list(record.get("skills") or user.skills or []),
             available=record.get("available"),
             statusText=record.get("statusText"),
@@ -310,4 +383,9 @@ class ProfileStore:
         return base
 
 
-profile_store = ProfileStore()
+if settings.persistence == "db":
+    from app.db_stores import DbProfileStore
+
+    profile_store = DbProfileStore(STUDENT_SEED, COMPANY_SEED)
+else:
+    profile_store = ProfileStore()
