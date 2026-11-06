@@ -309,7 +309,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff] dark:bg-[#09090b] text-[#0b1c30] dark:text-[#f4f4f5] flex flex-col selection:bg-[#3525cd] selection:text-white pb-20 md:pb-8 transition-colors duration-200">
+    <div className="min-h-screen bg-[#f8f9ff] dark:bg-[#09090b] text-[#0b1c30] dark:text-[#f4f4f5] flex flex-col selection:bg-[#3525cd] selection:text-white transition-colors duration-200">
       <LoadingScreen onComplete={() => setAppLoading(false)} duration={2200} />
 
       {/* Universal Responsive Header */}
@@ -351,7 +351,7 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full animate-in fade-in duration-200">
+      <main className="flex-1 w-full animate-in fade-in duration-200 pb-24 md:pb-0">
         {mode === 'ecosystem' ? (
           <>
             {ecosystemView === 'landing' && (
