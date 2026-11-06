@@ -157,11 +157,16 @@ export function quickDemoLogin(portal: PortalRole): AuthResponse {
 export async function getMe(): Promise<AuthUser | null> {
   const token = getToken();
   if (!token) return null;
+  // Demo tokens are not real JWTs — skip the network call and return cached user
+  if (token.startsWith('geova-demo-token-')) return getCachedUser();
   try {
     const res = await fetch(`${BASE}/me`, { headers: authHeaders() });
     if (!res.ok) { logout(); return null; }
     const data = await res.json();
-    return data.user as AuthUser;
+    // FastAPI /me returns the user object directly (not wrapped in { user: ... })
+    const user = (data.user ?? data) as AuthUser;
+    localStorage.setItem('geova_auth_user', JSON.stringify(user));
+    return user;
   } catch {
     return getCachedUser();
   }
