@@ -138,6 +138,20 @@ export function App() {
     );
   };
 
+  const handleAddTaskToSquad = (squadId: string, task: any) => {
+    setSquads(prev =>
+      prev.map(s => {
+        if (s.id === squadId) {
+          const updatedTasks = [...s.tasks, task];
+          const completedCount = updatedTasks.filter(t => t.status === 'completed').length;
+          const progressPercentage = Math.round((completedCount / updatedTasks.length) * 100);
+          return { ...s, tasks: updatedTasks, progressPercentage };
+        }
+        return s;
+      })
+    );
+  };
+
   // Review Feedback Data
   const [lastFeedback, setLastFeedback] = useState<any>(null);
 
@@ -470,6 +484,7 @@ export function App() {
                 currentUser={currentUser}
                 onUpdateTaskStatus={handleUpdateTaskStatus}
                 onAddProjectSquad={squad => setSquads(prev => [squad, ...prev])}
+                onAddTask={handleAddTaskToSquad}
               />
             )}
 

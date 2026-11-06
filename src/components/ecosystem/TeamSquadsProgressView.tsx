@@ -18,13 +18,15 @@ interface TeamSquadsProgressViewProps {
   currentUser: Student;
   onUpdateTaskStatus: (squadId: string, taskId: string, newStatus: 'todo' | 'in-progress' | 'completed') => void;
   onAddProjectSquad: (squad: ProjectSquad) => void;
+  onAddTask?: (squadId: string, task: ProjectSquadTask) => void;
 }
 
 export const TeamSquadsProgressView: React.FC<TeamSquadsProgressViewProps> = ({
   squads,
   currentUser,
   onUpdateTaskStatus,
-  onAddProjectSquad
+  onAddProjectSquad,
+  onAddTask
 }) => {
   const [activeSquadId, setActiveSquadId] = useState<string>(squads[0]?.id || '');
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
@@ -53,9 +55,12 @@ export const TeamSquadsProgressView: React.FC<TeamSquadsProgressViewProps> = ({
     const completedCount = updatedTasks.filter(t => t.status === 'completed').length;
     const progress = Math.round((completedCount / updatedTasks.length) * 100);
 
-    // Update squad locally in parent state if desired or pass handler. We simulate mutation:
-    activeSquad.tasks = updatedTasks;
-    activeSquad.progressPercentage = progress;
+    if (onAddTask) {
+      onAddTask(activeSquad.id, newTask);
+    } else {
+      activeSquad.tasks = updatedTasks;
+      activeSquad.progressPercentage = progress;
+    }
 
     setNewTaskTitle('');
     setShowNewTaskModal(false);
