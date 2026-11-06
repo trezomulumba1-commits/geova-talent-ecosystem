@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   Sparkles,
 } from 'lucide-react';
-import { login, register, PortalRole } from '../services/authService';
+import { login, register, quickDemoLogin, PortalRole } from '../services/authService';
 
 type AuthMode = 'login' | 'register';
 
@@ -116,6 +116,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
     setEmail(portal.demoEmail);
     setPassword(portal.demoPassword);
     setError(null);
+  };
+
+  const handleQuickDemoEnter = () => {
+    setError(null);
+    const session = quickDemoLogin(activePortal);
+    setSuccess(`Welcome, ${session.user.name}! Entering ${portal.label} Portal...`);
+    setTimeout(() => onAuthSuccess(activePortal, session.user.name), 600);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -338,15 +345,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
             </button>
           </form>
 
-          {/* Demo Fill Button */}
+          {/* Demo Actions */}
           {authMode === 'login' && (
-            <button
-              onClick={fillDemo}
-              className="w-full mt-3 py-2 rounded-xl border border-zinc-800 text-zinc-500 text-xs font-semibold hover:text-zinc-300 hover:border-zinc-600 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Fill Demo Credentials ({portal.label} Portal)
-            </button>
+            <div className="mt-4 pt-3 border-t border-zinc-800/80 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={handleQuickDemoEnter}
+                className="w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-xs font-semibold border border-zinc-700/80 hover:border-zinc-500 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>Instant Demo Access ({portal.label})</span>
+              </button>
+              <button
+                type="button"
+                onClick={fillDemo}
+                className="text-[11px] text-zinc-500 hover:text-zinc-300 transition-colors text-center cursor-pointer"
+              >
+                Or autofill {portal.label} credentials
+              </button>
+            </div>
           )}
         </motion.div>
 
