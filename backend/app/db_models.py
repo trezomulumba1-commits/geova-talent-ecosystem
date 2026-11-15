@@ -147,3 +147,193 @@ class CollabInterestRow(Base):
     post_id = Column(String, primary_key=True)
     profile_id = Column(String, primary_key=True)
     created_at = Column(String, nullable=False, default="")
+
+
+class ProjectRow(Base):
+    __tablename__ = "projects"
+
+    id = Column(String, primary_key=True)
+    title = Column(String, nullable=False)
+    tagline = Column(String, nullable=False, default="")
+    category = Column(String, nullable=False, default="Web")
+    status = Column(String, nullable=False, default="Validated")
+    image = Column(String, nullable=False, default="")
+    creator = Column(JSON, nullable=False, default=dict)
+    tags = Column(JSON, nullable=False, default=list)
+    problem = Column(Text, nullable=False, default="")
+    solution = Column(Text, nullable=False, default="")
+    key_features = Column(JSON, nullable=False, default=list)
+    contribution = Column(String, nullable=False, default="")
+    technologies = Column(JSON, nullable=False, default=list)
+    gallery = Column(JSON, nullable=False, default=list)
+    live_demo_url = Column(String, nullable=True)
+    github_url = Column(String, nullable=True)
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "tagline": self.tagline,
+            "category": self.category,
+            "status": self.status,
+            "image": self.image,
+            "creator": self.creator or {},
+            "tags": list(self.tags or []),
+            "problem": self.problem or "",
+            "solution": self.solution or "",
+            "keyFeatures": list(self.key_features or []),
+            "contribution": self.contribution or "",
+            "technologies": list(self.technologies or []),
+            "gallery": list(self.gallery or []),
+            "liveDemoUrl": self.live_demo_url,
+            "githubUrl": self.github_url,
+        }
+
+
+class ApplicationRow(Base):
+    __tablename__ = "applications"
+
+    id = Column(String, primary_key=True)
+    opportunity_id = Column(String, nullable=False, index=True)
+    applicant_id = Column(String, nullable=False, index=True)
+    applicant_name = Column(String, nullable=False, default="")
+    applicant_avatar = Column(String, nullable=False, default="")
+    applicant_role = Column(String, nullable=False, default="")
+    portfolio_link = Column(String, nullable=True)
+    github_link = Column(String, nullable=True)
+    cover_note = Column(Text, nullable=False, default="")
+    include_verified_score = Column(Boolean, nullable=False, default=True)
+    status = Column(String, nullable=False, default="Pending Review")
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "opportunityId": self.opportunity_id,
+            "applicantId": self.applicant_id,
+            "applicantName": self.applicant_name,
+            "applicantAvatar": self.applicant_avatar,
+            "applicantRole": self.applicant_role,
+            "portfolioLink": self.portfolio_link,
+            "githubLink": self.github_link,
+            "coverNote": self.cover_note,
+            "includeVerifiedScore": self.include_verified_score,
+            "status": self.status,
+            "createdAt": self.created_at,
+        }
+
+
+class ForumPostRow(Base):
+    __tablename__ = "forum_posts"
+
+    id = Column(String, primary_key=True)
+    author_id = Column(String, nullable=False, index=True)
+    author = Column(String, nullable=False, default="")
+    author_avatar = Column(String, nullable=False, default="")
+    role = Column(String, nullable=False, default="Student")
+    category = Column(String, nullable=False, default="System Design")
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False, default="")
+    tags = Column(JSON, nullable=False, default=list)
+    upvotes = Column(Integer, nullable=False, default=0)
+    replies_count = Column(Integer, nullable=False, default=0)
+    time_ago = Column(String, nullable=False, default="Just now")
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "authorId": self.author_id,
+            "author": self.author,
+            "authorAvatar": self.author_avatar,
+            "role": self.role,
+            "category": self.category,
+            "title": self.title,
+            "content": self.content,
+            "tags": list(self.tags or []),
+            "upvotes": self.upvotes,
+            "repliesCount": self.replies_count,
+            "timeAgo": self.time_ago,
+            "createdAt": self.created_at,
+        }
+
+
+class ProjectSquadRow(Base):
+    __tablename__ = "project_squads"
+
+    id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    tagline = Column(String, nullable=False, default="")
+    icon = Column(String, nullable=False, default="Layers")
+    color = Column(String, nullable=False, default="indigo")
+    current_sprint = Column(String, nullable=False, default="Sprint 1")
+    progress_percentage = Column(Integer, nullable=False, default=0)
+    members = Column(JSON, nullable=False, default=list)
+    tasks = Column(JSON, nullable=False, default=list)
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "tagline": self.tagline,
+            "icon": self.icon,
+            "color": self.color,
+            "currentSprint": self.current_sprint,
+            "progressPercentage": self.progress_percentage,
+            "members": list(self.members or []),
+            "tasks": list(self.tasks or []),
+            "createdAt": self.created_at,
+        }
+
+
+class PrepSessionRow(Base):
+    __tablename__ = "prep_sessions"
+
+    id = Column(String, primary_key=True)
+    date_month = Column(String, nullable=False, default="")
+    date_day = Column(String, nullable=False, default="")
+    title = Column(String, nullable=False)
+    time_range = Column(String, nullable=False, default="")
+    type = Column(String, nullable=False, default="technical")
+    link_available = Column(Boolean, nullable=False, default=True)
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "dateMonth": self.date_month,
+            "dateDay": self.date_day,
+            "title": self.title,
+            "timeRange": self.time_range,
+            "type": self.type,
+            "linkAvailable": self.link_available,
+            "createdAt": self.created_at,
+        }
+
+
+class LibraryResourceRow(Base):
+    __tablename__ = "library_resources"
+
+    id = Column(String, primary_key=True)
+    section = Column(String, nullable=False, default="technical")
+    category = Column(String, nullable=False, default="")
+    title = Column(String, nullable=False)
+    duration = Column(String, nullable=False, default="")
+    completed = Column(Boolean, nullable=False, default=False)
+    image = Column(String, nullable=True)
+    created_at = Column(String, nullable=False, default="")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "section": self.section,
+            "category": self.category,
+            "title": self.title,
+            "duration": self.duration,
+            "completed": self.completed,
+            "image": self.image,
+            "createdAt": self.created_at,
+        }
+

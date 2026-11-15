@@ -24,113 +24,23 @@
 }
 
 /* -------------------------------------------------------------
-   STRICT MONOCHROME: BLACK, WHITE & NEUTRAL GRAY THROUGHOUT
+   THEME TOKENS — dark-mode overrides handled via Tailwind dark: variants in components.
+   Only structural / utility overrides live here.
    ------------------------------------------------------------- */
 body:not(.dark) {
-  background-color: #ffffff !important;
-  color: #09090b !important;
+  background-color: #ffffff;
+  color: #09090b;
 }
 
-.dark {
-  background-color: #09090b !important;
-  color: #f4f4f5 !important;
+.dark body {
+  background-color: #09090b;
+  color: #f4f4f5;
 }
 
-/* Neutralize all colored utility backgrounds & text to strict monochrome */
-.bg-\[\#3525cd\],
-.bg-\[\#1e00a9\],
-.bg-indigo-600,
-.bg-indigo-500,
-.bg-blue-600,
-.bg-blue-500,
-.bg-emerald-600,
-.bg-emerald-500,
-.bg-amber-500,
-.bg-violet-600,
-.bg-sky-500 {
-  background-color: #18181b !important;
-  color: #ffffff !important;
-}
-
-.dark .bg-\[\#3525cd\],
-.dark .bg-\[\#1e00a9\],
-.dark .bg-indigo-600,
-.dark .bg-indigo-500,
-.dark .bg-blue-600,
-.dark .bg-blue-500,
-.dark .bg-emerald-600,
-.dark .bg-emerald-500,
-.dark .bg-amber-500,
-.dark .bg-violet-600,
-.dark .bg-sky-500 {
-  background-color: #ffffff !important;
-  color: #09090b !important;
-}
-
-.text-\[\#3525cd\],
-.text-\[\#1e00a9\],
-.text-indigo-600,
-.text-indigo-400,
-.text-blue-600,
-.text-blue-400,
-.text-emerald-600,
-.text-emerald-400,
-.text-amber-500,
-.text-amber-400,
-.text-violet-400,
-.text-sky-400 {
-  color: #18181b !important;
-}
-
-.dark .text-\[\#3525cd\],
-.dark .text-\[\#1e00a9\],
-.dark .text-indigo-600,
-.dark .text-indigo-400,
-.dark .text-blue-600,
-.dark .text-blue-400,
-.dark .text-emerald-600,
-.dark .text-emerald-400,
-.dark .text-amber-500,
-.dark .text-amber-400,
-.dark .text-violet-400,
-.dark .text-sky-400 {
-  color: #f4f4f5 !important;
-}
-
+/* Dark mode: white card surfaces become zinc-900 */
 .dark .bg-white {
-  background-color: #18181b !important;
-  border-color: #27272a !important;
-}
-
-.dark .bg-\[\#f8f9ff\],
-.dark .bg-\[\#eff4ff\],
-.dark .bg-\[\#e5eeff\],
-.dark .bg-\[\#d7dff9\],
-.dark .bg-\[\#eceef3\],
-.dark .bg-slate-100,
-.dark .bg-slate-200,
-.dark .bg-slate-50,
-.dark .bg-zinc-50,
-.dark .bg-gray-50 {
-  background-color: #121212 !important;
-  border-color: #27272a !important;
-}
-
-.dark .text-\[\#0b1c30\],
-.dark .text-\[\#191c20\],
-.dark .text-\[\#464555\],
-.dark .text-\[\#565e74\],
-.dark .text-\[\#777587\] {
-  color: #f4f4f5 !important;
-}
-
-.dark .border-\[\#c7c4d8\],
-.dark .border-\[\#eceef3\],
-.dark .border-\[\#e5eeff\],
-.dark .border-slate-200,
-.dark .border-gray-200,
-.dark .border-zinc-200 {
-  border-color: #27272a !important;
+  background-color: #18181b;
+  border-color: #27272a;
 }
 
 /* Glassmorphism effects */

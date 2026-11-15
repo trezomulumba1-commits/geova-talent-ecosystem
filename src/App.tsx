@@ -67,6 +67,14 @@ import {
   createOpportunity,
   toggleCollabInterest,
   sendConnectionRequest,
+  fetchProjects,
+  fetchProjectSquads,
+  updateSquadTaskStatus,
+  addSquadTask,
+  fetchPrepSessions,
+  fetchLibraryResources,
+  toggleLibraryResourceComplete,
+  applyToOpportunity,
 } from './services/apiService';
 
 export function App() {
@@ -151,46 +159,35 @@ export function App() {
     let active = true;
     async function loadLiveData() {
       try {
-        const [loadedStudents, loadedCompanies, loadedOpps, loadedCollabs] = await Promise.all([
+        const [
+          loadedStudents,
+          loadedCompanies,
+          loadedOpps,
+          loadedCollabs,
+          loadedProjects,
+          loadedSquads,
+          loadedSessions,
+          loadedResources
+        ] = await Promise.all([
           fetchStudents().catch(() => []),
           fetchCompanies().catch(() => []),
           fetchOpportunities().catch(() => []),
           fetchCollabs().catch(() => []),
+          fetchProjects().catch(() => []),
+          fetchProjectSquads().catch(() => []),
+          fetchPrepSessions().catch(() => []),
+          fetchLibraryResources().catch(() => []),
         ]);
 
         if (active) {
-          if (loadedStudents.length > 0) {
-            setStudents(loadedStudents);
-            const allProjects: Project[] = [];
-            loadedStudents.forEach(st => {
-              if (st.projects && st.projects.length > 0) {
-                st.projects.forEach(p => {
-                  allProjects.push({
-                    id: p.id,
-                    title: p.title,
-                    tagline: p.description,
-                    category: (p.type === 'Mobile UI' ? 'Mobile' : 'Web') as any,
-                    status: 'Validated',
-                    image: p.image,
-                    creator: { name: st.name, role: st.role, avatar: st.avatar },
-                    tags: st.skills || ['Full-Stack'],
-                    problem: p.description,
-                    solution: p.description,
-                    keyFeatures: ['Live Data Architecture', 'Production Ready', 'Verified Capability'],
-                    contribution: 'Architecture & Full-Stack Implementation',
-                    technologies: st.skills || ['React', 'TypeScript', 'Node.js'],
-                    gallery: [p.image],
-                  });
-                });
-              }
-            });
-            if (allProjects.length > 0) {
-              setProjects(allProjects);
-            }
-          }
+          if (loadedStudents.length > 0) setStudents(loadedStudents);
           if (loadedCompanies.length > 0) setCompanies(loadedCompanies);
           if (loadedOpps.length > 0) setOpportunities(loadedOpps);
           if (loadedCollabs.length > 0) setCollabs(loadedCollabs);
+          if (loadedProjects.length > 0) setProjects(loadedProjects);
+          if (loadedSquads.length > 0) setSquads(loadedSquads);
+          if (loadedSessions.length > 0) setSessions(loadedSessions);
+          if (loadedResources.length > 0) setResources(loadedResources);
         }
       } catch (err) {
         console.error('Failed to load live database records:', err);
@@ -202,7 +199,7 @@ export function App() {
     };
   }, []);
 
-  const handleUpdateTaskStatus = (squadId: string, taskId: string, newStatus: 'todo' | 'in-progress' | 'completed') => {
+  const handleUpdateTaskStatus = async (squadId: string, taskId: string, newStatus: 'todo' | 'in-progress' | 'completed') => {
     setSquads(prev =>
       prev.map(s => {
         if (s.id === squadId) {
@@ -214,9 +211,14 @@ export function App() {
         return s;
       })
     );
+    try {
+      await updateSquadTaskStatus(squadId, taskId, newStatus);
+    } catch (e) {
+      console.warn('Could not persist task status in DB:', e);
+    }
   };
 
-  const handleAddTaskToSquad = (squadId: string, task: any) => {
+  const handleAddTaskToSquad = async (squadId: string, task: any) => {
     setSquads(prev =>
       prev.map(s => {
         if (s.id === squadId) {
@@ -228,6 +230,11 @@ export function App() {
         return s;
       })
     );
+    try {
+      await addSquadTask(squadId, { title: task.title, priority: task.priority });
+    } catch (e) {
+      console.warn('Could not persist new squad task in DB:', e);
+    }
   };
 
   // Review Feedback Data
@@ -320,7 +327,7 @@ export function App() {
     }
   };
 
-  const handleToggleResourceComplete = (resourceId: string) => {
+  const handleToggleResourceComplete = async (resourceId: string) => {
     setResources(prev =>
       prev.map(r => {
         if (r.id === resourceId) {
@@ -332,6 +339,11 @@ export function App() {
         return r;
       })
     );
+    try {
+      await toggleLibraryResourceComplete(resourceId);
+    } catch (e) {
+      console.warn('Could not persist resource completion in DB:', e);
+    }
   };
 
   const handleFinishArenaSession = (feedback: any) => {
@@ -696,7 +708,18 @@ export function App() {
           opportunity={applyOpp}
           currentUser={currentUser}
           onClose={() => setApplyOpp(null)}
-          onSubmit={_data => {
+          onSubmit={async data => {
+            try {
+              await applyToOpportunity({
+                opportunityId: applyOpp.id,
+                portfolioLink: data.portfolioLink,
+                githubLink: data.githubLink,
+                coverNote: data.coverNote,
+                includeVerifiedScore: data.includeVerifiedScore,
+              });
+            } catch (err) {
+              console.warn('Could not submit application to DB:', err);
+            }
             setApplyOpp(null);
           }}
         />

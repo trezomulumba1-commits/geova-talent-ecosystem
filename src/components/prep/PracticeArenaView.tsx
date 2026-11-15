@@ -339,29 +339,29 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       
       {/* Top Session Status Bar */}
-      <div className="flex items-center justify-between bg-white border border-[#c7c4d8]/60 p-4 rounded-2xl shadow-xs">
+      <div className="flex items-center justify-between bg-white border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 pr-3 border-r border-[#c7c4d8]/60">
+          <div className="hidden sm:flex items-center gap-2 pr-3 border-r border-zinc-200 dark:border-zinc-800">
             <GeovaLogo size="xs" />
-            <span className="text-xs font-bold text-[#0b1c30]">Evaluation Arena</span>
+            <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Evaluation Arena</span>
           </div>
-          <span className="bg-[#eff4ff] text-[#3525cd] text-xs font-bold px-3 py-1 rounded-full">
+          <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-3 py-1 rounded-full">
             Question {currentQuestion.number} of {currentQuestion.total}
           </span>
-          <span className="text-xs font-semibold text-[#464555] hidden md:inline">
+          <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hidden md:inline">
             Category: {currentQuestion.category}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Mode Switcher: Video vs Code Sandbox */}
-          <div className="flex bg-[#eff4ff] p-1 rounded-xl border border-[#d7dff9]">
+          <div className="flex bg-indigo-50 dark:bg-indigo-950/60 p-1 rounded-xl border border-[#d7dff9]">
             <button
               onClick={() => setArenaMode('video')}
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                 arenaMode === 'video'
-                  ? 'bg-white text-[#3525cd] shadow-2xs'
-                  : 'text-[#464555] hover:text-[#0b1c30]'
+                  ? 'bg-white text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-zinc-100'
               }`}
             >
               <Video className="w-3.5 h-3.5" />
@@ -372,8 +372,8 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               onClick={() => setArenaMode('code')}
               className={`px-3 py-1 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                 arenaMode === 'code'
-                  ? 'bg-white text-[#3525cd] shadow-2xs'
-                  : 'text-[#464555] hover:text-[#0b1c30]'
+                  ? 'bg-white text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-zinc-100'
               }`}
             >
               <Code2 className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
             </button>
           </div>
 
-          <div className="flex items-center gap-2 bg-[#f8f9ff] border border-[#e5eeff] px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold text-[#0b1c30]">
+          <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800 border border-[#e5eeff] px-3.5 py-1.5 rounded-xl font-mono text-xs font-bold text-zinc-900 dark:text-zinc-100">
             <Clock className="w-3.5 h-3.5 text-[#ba1a1a] animate-pulse" />
             <span>{formatTime(seconds)}</span>
           </div>
@@ -389,7 +389,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
           <button
             onClick={handleEvaluateAnswer}
             disabled={isEvaluating}
-            className="px-4 py-1.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="px-4 py-1.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             {isEvaluating ? (
               <>
@@ -411,7 +411,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
         /* Video Arena: Split Interviewer & User Webcams */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Technical Interviewer Video Box */}
-          <div className="bg-[#0b1c30] rounded-3xl overflow-hidden relative aspect-video sm:aspect-4/3 flex items-center justify-center border-2 border-[#1e00a9]/40 shadow-md">
+          <div className="bg-zinc-100 dark:bg-[#0b1c30] rounded-3xl overflow-hidden relative aspect-video sm:aspect-4/3 flex items-center justify-center border-2 border-[#1e00a9]/40 shadow-md">
             <img
               src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80"
               alt="Technical Interviewer"
@@ -440,15 +440,15 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               </div>
               <div className="flex items-center gap-1">
                 <span className="w-1 h-3 bg-[#4f46e5] rounded-full animate-bounce" />
-                <span className="w-1 h-5 bg-[#3525cd] rounded-full animate-bounce [animation-delay:0.1s]" />
+                <span className="w-1 h-5 bg-indigo-600 dark:bg-indigo-500 rounded-full animate-bounce [animation-delay:0.1s]" />
                 <span className="w-1 h-2 bg-[#4f46e5] rounded-full animate-bounce [animation-delay:0.2s]" />
-                <span className="w-1 h-4 bg-[#3525cd] rounded-full animate-bounce [animation-delay:0.15s]" />
+                <span className="w-1 h-4 bg-indigo-600 dark:bg-indigo-500 rounded-full animate-bounce [animation-delay:0.15s]" />
               </div>
             </div>
           </div>
 
           {/* Candidate Self Video Box */}
-          <div className="bg-[#191c20] rounded-3xl overflow-hidden relative aspect-video sm:aspect-4/3 flex items-center justify-center border border-[#c7c4d8]/60 shadow-md">
+          <div className="bg-[#191c20] rounded-3xl overflow-hidden relative aspect-video sm:aspect-4/3 flex items-center justify-center border border-zinc-200 dark:border-zinc-800 shadow-md">
             {camActive ? (
               <video
                 ref={videoRef}
@@ -465,7 +465,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
             )}
 
             <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-semibold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#3525cd]" />
+              <span className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-500" />
               {currentUser.name} (You)
             </div>
 
@@ -495,7 +495,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               <select
                 value={codeLanguage}
                 onChange={e => setCodeLanguage(e.target.value as any)}
-                className="bg-[#1e293b] text-white text-xs font-mono px-2.5 py-1 rounded-lg border border-white/10 outline-hidden"
+                className="bg-zinc-100 dark:bg-[#1e293b] text-white text-xs font-mono px-2.5 py-1 rounded-lg border border-white/10 outline-hidden"
               >
                 <option value="typescript">TypeScript</option>
                 <option value="javascript">JavaScript</option>
@@ -519,7 +519,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               <button
                 onClick={handleAiCodeReview}
                 disabled={isReviewingCode}
-                className="px-3 py-1.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+                className="px-3 py-1.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Sparkles className={`w-3.5 h-3.5 ${isReviewingCode ? 'animate-spin' : ''}`} />
                 <span>{isReviewingCode ? 'Reviewing...' : 'AI Code Review'}</span>
@@ -548,10 +548,10 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
 
           {/* Gemini AI Code Review Breakdown */}
           {codeReviewResult && (
-            <div className="p-4 bg-[#1e293b]/90 rounded-2xl border border-[#3525cd]/40 text-white text-xs space-y-2">
+            <div className="p-4 bg-zinc-100 dark:bg-[#1e293b]/90 rounded-2xl border border-[#3525cd]/40 text-white text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs flex items-center gap-1.5 text-[#a5b4fc]">
-                  <Sparkles className="w-4 h-4 text-[#3525cd]" />
+                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                   Gemini Code Review & Complexity Analysis
                 </span>
                 <div className="flex items-center gap-3 text-[11px] font-mono">
@@ -580,21 +580,21 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               <span className="px-3 py-1 bg-[#e8f5e9] text-[#2e7d32] text-xs font-bold rounded-full inline-block mb-1">
                 Gemini AI Grade Certified
               </span>
-              <h2 className="font-display font-bold text-xl sm:text-2xl text-[#0b1c30]">
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-zinc-900 dark:text-zinc-100">
                 Interview Answer Scorecard
               </h2>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="bg-[#eff4ff] px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
-                <span className="text-[10px] uppercase font-bold text-[#777587] block">Grade</span>
-                <span className="font-display font-black text-2xl text-[#3525cd]">
+              <div className="bg-indigo-50 dark:bg-indigo-950/60 px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
+                <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block">Grade</span>
+                <span className="font-display font-black text-2xl text-indigo-600 dark:text-indigo-400">
                   {liveEvaluation.grade}
                 </span>
               </div>
-              <div className="bg-[#eff4ff] px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
-                <span className="text-[10px] uppercase font-bold text-[#777587] block">Score</span>
-                <span className="font-display font-black text-2xl text-[#0b1c30]">
+              <div className="bg-indigo-50 dark:bg-indigo-950/60 px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
+                <span className="text-[10px] uppercase font-bold text-zinc-500 dark:text-zinc-400 block">Score</span>
+                <span className="font-display font-black text-2xl text-zinc-900 dark:text-zinc-100">
                   {liveEvaluation.overallScore}%
                 </span>
               </div>
@@ -604,27 +604,27 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
           {/* 4 Rubric Scores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             <div className="p-3 bg-[#fafbfe] rounded-xl border border-[#eceef3] space-y-1">
-              <span className="text-[11px] font-bold text-[#777587]">Technical Depth</span>
-              <div className="font-bold text-base text-[#0b1c30]">{liveEvaluation.rubric?.technicalAccuracy?.score || 92}%</div>
-              <p className="text-[10px] text-[#464555] line-clamp-2">{liveEvaluation.rubric?.technicalAccuracy?.comment}</p>
+              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">Technical Depth</span>
+              <div className="font-bold text-base text-zinc-900 dark:text-zinc-100">{liveEvaluation.rubric?.technicalAccuracy?.score || 92}%</div>
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 line-clamp-2">{liveEvaluation.rubric?.technicalAccuracy?.comment}</p>
             </div>
 
             <div className="p-3 bg-[#fafbfe] rounded-xl border border-[#eceef3] space-y-1">
-              <span className="text-[11px] font-bold text-[#777587]">Communication</span>
-              <div className="font-bold text-base text-[#0b1c30]">{liveEvaluation.rubric?.communicationClarity?.score || 94}%</div>
-              <p className="text-[10px] text-[#464555] line-clamp-2">{liveEvaluation.rubric?.communicationClarity?.comment}</p>
+              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">Communication</span>
+              <div className="font-bold text-base text-zinc-900 dark:text-zinc-100">{liveEvaluation.rubric?.communicationClarity?.score || 94}%</div>
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 line-clamp-2">{liveEvaluation.rubric?.communicationClarity?.comment}</p>
             </div>
 
             <div className="p-3 bg-[#fafbfe] rounded-xl border border-[#eceef3] space-y-1">
-              <span className="text-[11px] font-bold text-[#777587]">Problem Solving</span>
-              <div className="font-bold text-base text-[#0b1c30]">{liveEvaluation.rubric?.problemSolving?.score || 90}%</div>
-              <p className="text-[10px] text-[#464555] line-clamp-2">{liveEvaluation.rubric?.problemSolving?.comment}</p>
+              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">Problem Solving</span>
+              <div className="font-bold text-base text-zinc-900 dark:text-zinc-100">{liveEvaluation.rubric?.problemSolving?.score || 90}%</div>
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 line-clamp-2">{liveEvaluation.rubric?.problemSolving?.comment}</p>
             </div>
 
             <div className="p-3 bg-[#fafbfe] rounded-xl border border-[#eceef3] space-y-1">
-              <span className="text-[11px] font-bold text-[#777587]">Code Hygiene</span>
-              <div className="font-bold text-base text-[#0b1c30]">{liveEvaluation.rubric?.codeQualityOrStructure?.score || 88}%</div>
-              <p className="text-[10px] text-[#464555] line-clamp-2">{liveEvaluation.rubric?.codeQualityOrStructure?.comment}</p>
+              <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400">Code Hygiene</span>
+              <div className="font-bold text-base text-zinc-900 dark:text-zinc-100">{liveEvaluation.rubric?.codeQualityOrStructure?.score || 88}%</div>
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 line-clamp-2">{liveEvaluation.rubric?.codeQualityOrStructure?.comment}</p>
             </div>
           </div>
 
@@ -635,7 +635,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
                 <CheckCircle2 className="w-4 h-4 text-[#2e7d32]" />
                 Key Highlights
               </span>
-              <ul className="text-xs text-[#0b1c30] space-y-1 list-disc list-inside">
+              <ul className="text-xs text-zinc-900 dark:text-zinc-100 space-y-1 list-disc list-inside">
                 {liveEvaluation.strengths.map((st, i) => (
                   <li key={i}>{st}</li>
                 ))}
@@ -647,7 +647,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
                 <Lightbulb className="w-4 h-4 text-[#f57f17]" />
                 Targeted Optimization Tips
               </span>
-              <ul className="text-xs text-[#0b1c30] space-y-1 list-disc list-inside">
+              <ul className="text-xs text-zinc-900 dark:text-zinc-100 space-y-1 list-disc list-inside">
                 {liveEvaluation.areasForImprovement.map((ar, i) => (
                   <li key={i}>{ar}</li>
                 ))}
@@ -658,15 +658,15 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
           {/* Recruiter Verdict & Proceed */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-[#eceef3]">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-[#3525cd]" />
-              <span className="text-xs font-bold text-[#0b1c30]">
-                Verdict: <span className="text-[#3525cd]">{liveEvaluation.recruiterReadinessVerdict}</span>
+              <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                Verdict: <span className="text-indigo-600 dark:text-indigo-400">{liveEvaluation.recruiterReadinessVerdict}</span>
               </span>
             </div>
 
             <button
               onClick={handleProceedToSummary}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
+              className="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all"
             >
               <span>View Full Performance Review</span>
               <ArrowRight className="w-4 h-4" />
@@ -676,20 +676,20 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
       )}
 
       {/* Floating Bottom Question & Hints Card */}
-      <div className="bg-white border border-[#c7c4d8]/60 rounded-3xl p-6 sm:p-8 shadow-[0_4px_24px_rgba(15,23,42,0.06)] space-y-4">
+      <div className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-[0_4px_24px_rgba(15,23,42,0.06)] space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#3525cd]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
               Question {currentQuestion.number} of {currentQuestion.total}
             </span>
-            <h2 className="font-display font-bold text-xl sm:text-2xl text-[#0b1c30] leading-snug">
+            <h2 className="font-display font-bold text-xl sm:text-2xl text-zinc-900 dark:text-zinc-100 leading-snug">
               {currentQuestion.question}
             </h2>
           </div>
 
           <button
             onClick={speakQuestionAloud}
-            className="p-2.5 rounded-xl border border-[#c7c4d8]/60 text-[#3525cd] hover:bg-[#eff4ff] transition-colors cursor-pointer shrink-0"
+            className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-950/60 transition-colors cursor-pointer shrink-0"
             title="Read Question Aloud"
           >
             <Volume2 className="w-5 h-5" />
@@ -697,15 +697,15 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
         </div>
 
         {/* Focus Areas Hints */}
-        <div className="p-4 bg-[#f8f9ff] rounded-2xl border border-[#e5eeff] space-y-2">
-          <p className="text-xs font-bold text-[#0b1c30] flex items-center gap-1.5">
-            <Target className="w-4 h-4 text-[#3525cd]" />
+        <div className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-2xl border border-[#e5eeff] space-y-2">
+          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+            <Target className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             Recommended Focus Tips:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {currentQuestion.focusAreas.map((tip, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-xs text-[#464555]">
-                <CheckCircle className="w-3.5 h-3.5 text-[#3525cd] shrink-0" />
+              <div key={idx} className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+                <CheckCircle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                 <span>{tip}</span>
               </div>
             ))}
@@ -715,7 +715,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
         {/* Transcribed Speech Snippet */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-[#777587]">
+            <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
               Candidate Answer / Spoken Transcript:
             </label>
             {speechRecognitionRef.current && (
@@ -724,7 +724,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
                 className={`text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center gap-1 cursor-pointer transition-colors ${
                   isListeningSpeech
                     ? 'bg-red-50 text-red-600 border-red-200 animate-pulse'
-                    : 'bg-[#eff4ff] text-[#3525cd] border-[#d7dff9]'
+                    : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border-[#d7dff9]'
                 }`}
               >
                 <Mic className="w-3 h-3" />
@@ -736,7 +736,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
             value={userTranscript}
             onChange={e => setUserTranscript(e.target.value)}
             rows={2}
-            className="w-full bg-[#f8f9ff] border border-[#c7c4d8]/60 rounded-xl p-3 text-xs text-[#0b1c30] focus:ring-1 focus:ring-[#3525cd] outline-hidden leading-relaxed"
+            className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-1 focus:ring-[#3525cd] outline-hidden leading-relaxed"
             placeholder="Speak into microphone or type your response..."
           />
         </div>
@@ -749,7 +749,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               onClick={() => setMicActive(!micActive)}
               className={`p-3 rounded-xl border transition-all cursor-pointer ${
                 micActive
-                  ? 'bg-white border-[#c7c4d8]/70 text-[#0b1c30] hover:bg-[#eff4ff]'
+                  ? 'bg-white border-[#c7c4d8]/70 text-zinc-900 dark:text-zinc-100 hover:bg-indigo-50 dark:bg-indigo-950/60'
                   : 'bg-[#ffdad6] text-[#ba1a1a] border-[#ba1a1a]/30'
               }`}
               title={micActive ? 'Mute Microphone' : 'Unmute Microphone'}
@@ -761,7 +761,7 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
               onClick={() => setCamActive(!camActive)}
               className={`p-3 rounded-xl border transition-all cursor-pointer ${
                 camActive
-                  ? 'bg-white border-[#c7c4d8]/70 text-[#0b1c30] hover:bg-[#eff4ff]'
+                  ? 'bg-white border-[#c7c4d8]/70 text-zinc-900 dark:text-zinc-100 hover:bg-indigo-50 dark:bg-indigo-950/60'
                   : 'bg-[#ffdad6] text-[#ba1a1a] border-[#ba1a1a]/30'
               }`}
               title={camActive ? 'Disable Camera' : 'Enable Camera'}
@@ -774,15 +774,15 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
           <div className="flex items-center gap-3">
             <button
               onClick={handleNextQuestion}
-              className="px-4 py-2.5 bg-white border border-[#c7c4d8]/70 hover:bg-[#eff4ff] text-[#0b1c30] text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2.5 bg-white border border-[#c7c4d8]/70 hover:bg-indigo-50 dark:bg-indigo-950/60 text-zinc-900 dark:text-zinc-100 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <SkipForward className="w-4 h-4 text-[#777587]" />
+              <SkipForward className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
               Skip
             </button>
 
             <button
               onClick={handleNextQuestion}
-              className="px-6 py-2.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+              className="px-6 py-2.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
               <span>{currentQuestionIndex === MOCK_INTERVIEW_QUESTIONS.length - 1 ? 'Finish & Grade' : 'Next Question'}</span>
               <ChevronRight className="w-4 h-4" />
@@ -794,3 +794,4 @@ export async function invalidateCache(keys: string[], redisClient: any): Promise
     </div>
   );
 };
+

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchForumPosts, createForumPost, upvoteForumPost } from '../../services/apiService';
 import { 
   MessageSquare, 
   ThumbsUp, 
@@ -40,53 +41,24 @@ export const CommunityForumView: React.FC<CommunityForumViewProps> = ({ currentU
   const [newContent, setNewContent] = useState('');
   const [newCategory, setNewCategory] = useState<'System Design' | 'Interview Debrief' | 'Career Advice' | 'Project Feedback'>('System Design');
 
-  const [posts, setPosts] = useState<ForumPost[]>([
-    {
-      id: 'p-1',
-      title: 'Google L5 System Design Interview Experience & Key Takeaways (2026)',
-      content: 'Just finished my on-site round for L5 Full Stack. They focused heavily on multi-region database sharding with consistency trade-offs (CAP theorem in practice) and rate-limiting sliding windows in Redis. Here is my exact approach...',
-      author: 'Alex Mwansa',
-      authorAvatar: currentUser.avatar,
-      role: 'Full-Stack Lead',
-      category: 'Interview Debrief',
-      upvotes: 48,
-      repliesCount: 14,
-      timeAgo: '2 hours ago',
-      tags: ['System Design', 'Google', 'Distributed Systems']
-    },
-    {
-      id: 'p-2',
-      title: 'How do you handle JWT revocation cleanly in microservices architecture?',
-      content: 'Looking for best practices when dealing with short-lived access tokens vs refresh tokens stored in secure httpOnly cookies. Is Redis blacklist better or public key verification with short expiration?',
-      author: 'Marcus Chen',
-      authorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80',
-      role: 'AI / ML Engineer',
-      category: 'System Design',
-      upvotes: 32,
-      repliesCount: 9,
-      timeAgo: '5 hours ago',
-      tags: ['Security', 'Backend', 'JWT']
-    },
-    {
-      id: 'p-3',
-      title: 'Feedback requested: Open source Tailwind component library for dashboards',
-      content: 'We built a set of high-density financial and project management components. Would love the community to test the keyboard navigation and contrast accessibility.',
-      author: 'Elena Rodriguez',
-      authorAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80',
-      role: 'UI/UX Designer',
-      category: 'Project Feedback',
-      upvotes: 27,
-      repliesCount: 6,
-      timeAgo: '1 day ago',
-      tags: ['React', 'Tailwind', 'Open Source']
-    }
-  ]);
+  const [posts, setPosts] = useState<ForumPost[]>([]);
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  useEffect(() => {
+    let active = true;
+    fetchForumPosts().then(data => {
+      if (active && data && data.length > 0) {
+        setPosts(data);
+      }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
+
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newContent.trim()) return;
 
-    const newPost: ForumPost = {
+    // Optimistic local post
+    const optimistic: ForumPost = {
       id: `p-${Date.now()}`,
       title: newTitle.trim(),
       content: newContent.trim(),
@@ -99,11 +71,23 @@ export const CommunityForumView: React.FC<CommunityForumViewProps> = ({ currentU
       timeAgo: 'Just now',
       tags: [newCategory]
     };
-
-    setPosts([newPost, ...posts]);
+    setPosts(prev => [optimistic, ...prev]);
     setNewTitle('');
     setNewContent('');
     setShowNewPostModal(false);
+
+    // Persist to DB, then refresh from server
+    try {
+      await createForumPost({
+        title: optimistic.title,
+        content: optimistic.content,
+        author: optimistic.author,
+        category: optimistic.category,
+        tags: optimistic.tags
+      });
+      const fresh = await fetchForumPosts();
+      if (fresh && fresh.length > 0) setPosts(fresh);
+    } catch (_) { /* optimistic post already shown */ }
   };
 
   const categories = ['All', 'System Design', 'Interview Debrief', 'Career Advice', 'Project Feedback'];
@@ -211,8 +195,9 @@ export const CommunityForumView: React.FC<CommunityForumViewProps> = ({ currentU
             <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800 text-xs">
               <div className="flex items-center gap-4">
                 <button 
-                  onClick={() => {
-                    setPosts(posts.map(p => p.id === post.id ? { ...p, upvotes: p.upvotes + 1 } : p));
+                  onClick={async () => {
+                    setPosts(prev => prev.map(p => p.id === post.id ? { ...p, upvotes: p.upvotes + 1 } : p));
+                    try { await upvoteForumPost(post.id); } catch (_) {}
                   }}
                   className="flex items-center gap-1.5 font-semibold text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 transition-colors cursor-pointer"
                 >

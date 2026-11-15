@@ -14,9 +14,18 @@ from app.routers import (
     opportunities,
     profiles,
     users,
+    ecosystem_extra,
 )
+from app.db_seeder import seed_all_tables
 
 app = FastAPI(title=settings.app_name, version="0.1.0")
+
+@app.on_event("startup")
+def on_startup():
+    try:
+        seed_all_tables()
+    except Exception as e:
+        print("Seeding note:", e)
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,6 +45,7 @@ app.include_router(connections.router)
 app.include_router(collabs.router)
 app.include_router(admin.router)
 app.include_router(ai.router)
+app.include_router(ecosystem_extra.router)
 
 
 @app.get("/")

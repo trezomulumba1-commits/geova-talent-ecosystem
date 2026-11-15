@@ -205,8 +205,8 @@ export const SystemArchitectView: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#c7c4d8]/60 shadow-xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 bg-[#eff4ff] text-[#3525cd] text-xs font-bold rounded-full flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#3525cd]" />
+            <span className="px-3 py-1 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-full flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               Experimental Feature
             </span>
             <span className="text-xs font-semibold text-[#777587]">
@@ -225,7 +225,7 @@ export const SystemArchitectView: React.FC = () => {
           <button
             onClick={handleRunAiAudit}
             disabled={isAnalyzingAi}
-            className="px-4 py-2.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="px-4 py-2.5 bg-[#3525cd] hover:bg-[#1e00a9] text-zinc-900 dark:text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             <Sparkles className={`w-4 h-4 ${isAnalyzingAi ? 'animate-spin' : ''}`} />
             <span>{isAnalyzingAi ? 'Gemini Auditing...' : 'Run Gemini Architecture Audit'}</span>
@@ -246,7 +246,7 @@ export const SystemArchitectView: React.FC = () => {
       </div>
 
       {/* Simulator Tuning Bar */}
-      <div className="bg-[#0b1c30] text-white p-5 rounded-3xl border border-[#1e293b] shadow-md grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <div className="bg-zinc-100 dark:bg-[#0b1c30] text-zinc-900 dark:text-white p-5 rounded-3xl border border-[#1e293b] shadow-md grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
         {/* Slider RPS */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
@@ -276,7 +276,7 @@ export const SystemArchitectView: React.FC = () => {
           <select
             value={failureMode}
             onChange={e => setFailureMode(e.target.value as any)}
-            className="w-full bg-[#1e293b] text-white text-xs font-mono px-3 py-2 rounded-xl border border-white/10 outline-hidden"
+            className="w-full bg-zinc-100 dark:bg-[#1e293b] text-zinc-900 dark:text-white text-xs font-mono px-3 py-2 rounded-xl border border-white/10 outline-hidden"
           >
             <option value="none">Normal Operation (Healthy Baseline)</option>
             <option value="ddos">5x Volumetric DDoS Ingress Surge</option>
@@ -307,7 +307,7 @@ export const SystemArchitectView: React.FC = () => {
       </div>
 
       {/* Interactive System Canvas Stage */}
-      <div className="relative bg-[#070d18] rounded-3xl border border-[#1e293b] overflow-hidden shadow-2xl p-6 min-h-[460px] flex items-center justify-center">
+      <div className="relative bg-zinc-200 dark:bg-[#070d18] rounded-3xl border border-[#1e293b] overflow-hidden shadow-2xl p-6 min-h-[460px] flex items-center justify-center">
         
         {/* Subtle Background Grid Pattern */}
         <div 
@@ -364,7 +364,7 @@ export const SystemArchitectView: React.FC = () => {
                 left: `${node.x}px`,
                 top: `${node.y}px`,
               }}
-              className={`absolute w-44 bg-[#111928] border rounded-2xl p-3.5 text-white transition-all cursor-pointer select-none hover:scale-105 shadow-lg ${
+              className={`absolute w-44 bg-white dark:bg-[#111928] border rounded-2xl p-3.5 text-zinc-900 dark:text-white transition-all cursor-pointer select-none hover:scale-105 shadow-lg ${
                 selectedNode?.id === node.id
                   ? 'border-indigo-400 ring-2 ring-indigo-500/50 shadow-indigo-500/20'
                   : node.status === 'critical'
@@ -407,7 +407,7 @@ export const SystemArchitectView: React.FC = () => {
         <div className="bg-white border-2 border-[#3525cd] rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 animate-in zoom-in-95">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#eceef3] pb-4">
             <div>
-              <span className="px-3 py-1 bg-[#eff4ff] text-[#3525cd] text-xs font-bold rounded-full inline-block mb-1">
+              <span className="px-3 py-1 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded-full inline-block mb-1">
                 Gemini Architecture Assessment
               </span>
               <h3 className="font-display font-bold text-xl text-[#0b1c30]">
@@ -416,13 +416,13 @@ export const SystemArchitectView: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="bg-[#eff4ff] px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
+              <div className="bg-indigo-50 dark:bg-indigo-950/60 px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
                 <span className="text-[10px] uppercase font-bold text-[#777587] block">Reliability Score</span>
-                <span className="font-display font-black text-2xl text-[#3525cd]">
+                <span className="font-display font-black text-2xl text-indigo-600 dark:text-indigo-400">
                   {aiReport.score}/100
                 </span>
               </div>
-              <div className="bg-[#eff4ff] px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
+              <div className="bg-indigo-50 dark:bg-indigo-950/60 px-4 py-2 rounded-2xl border border-[#d7dff9] text-center">
                 <span className="text-[10px] uppercase font-bold text-[#777587] block">Simulated P99</span>
                 <span className="font-display font-black text-2xl text-[#0b1c30]">
                   {aiReport.slaP99}
@@ -463,13 +463,13 @@ export const SystemArchitectView: React.FC = () => {
       {selectedNode && (
         <div className="bg-white p-5 rounded-3xl border border-[#c7c4d8]/60 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-[#eff4ff] rounded-2xl border border-[#d7dff9]">
+            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/60 rounded-2xl border border-[#d7dff9]">
               {getNodeIcon(selectedNode.type)}
             </div>
             <div>
               <h4 className="font-bold text-sm text-[#0b1c30]">{selectedNode.label}</h4>
               <p className="text-xs text-[#777587]">
-                Type: {selectedNode.type.toUpperCase()} • Status: <span className="font-bold text-[#3525cd]">{selectedNode.status.toUpperCase()}</span>
+                Type: {selectedNode.type.toUpperCase()} • Status: <span className="font-bold text-indigo-600 dark:text-indigo-400">{selectedNode.status.toUpperCase()}</span>
               </p>
             </div>
           </div>
@@ -481,7 +481,7 @@ export const SystemArchitectView: React.FC = () => {
             </div>
             <div>
               <span className="text-[#777587] block text-[10px]">AVG LATENCY</span>
-              <span className="font-bold text-[#3525cd]">{selectedNode.latencyMs}ms</span>
+              <span className="font-bold text-indigo-600 dark:text-indigo-400">{selectedNode.latencyMs}ms</span>
             </div>
             <button
               onClick={() => setSelectedNode(null)}
@@ -496,3 +496,4 @@ export const SystemArchitectView: React.FC = () => {
     </div>
   );
 };
+

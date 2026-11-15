@@ -52,17 +52,17 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white border border-[#c7c4d8]/60 rounded-3xl p-6 sm:p-8 shadow-[0_4px_24px_rgba(15,23,42,0.04)]"
+        className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-[0_4px_24px_rgba(15,23,42,0.04)]"
       >
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center sm:text-left">
-            <span className="bg-[#eff4ff] text-[#3525cd] text-xs font-bold px-3 py-1 rounded-full inline-block">
+            <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-3 py-1 rounded-full inline-block">
               Technical Interview Readiness
             </span>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl text-[#0b1c30]">
+            <h1 className="font-display font-bold text-2xl sm:text-3xl text-zinc-900 dark:text-zinc-100">
               Welcome back, {currentUser.name}
             </h1>
-            <p className="text-sm text-[#464555] max-w-md leading-relaxed">
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 max-w-md leading-relaxed">
               Your overall interview readiness is pacing ahead of 82% of candidates. Complete 2 more mock scenarios to hit your 90% target.
             </p>
           </div>
@@ -96,31 +96,31 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
               </svg>
 
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="font-display font-bold text-2xl text-[#0b1c30] leading-none">
+                <span className="font-display font-bold text-2xl text-zinc-900 dark:text-zinc-100 leading-none">
                   {readinessScore}%
                 </span>
-                <span className="text-[10px] font-semibold text-[#777587] mt-0.5">
+                <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 mt-0.5">
                   Readiness
                 </span>
               </div>
             </div>
-            <span className="text-[11px] font-semibold text-[#464555] mt-1">
+            <span className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 mt-1">
               Target: 90%
             </span>
           </div>
         </div>
 
         {/* Quick Launch & Transcript Buttons */}
-        <div className="pt-6 mt-6 border-t border-[#eceef3] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs text-[#464555]">
-            <AnimatedIcon icon={Target} size="xs" variant="minimal" className="text-[#3525cd]" />
+        <div className="pt-6 mt-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+            <AnimatedIcon icon={Target} size="xs" variant="minimal" className="text-indigo-600 dark:text-indigo-400" />
             <span>Real-time voice pacing & architectural rubric evaluation</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => setShowResumeModal(true)}
-              className="w-full sm:w-auto px-4 py-2.5 bg-[#eff4ff] hover:bg-[#d7dff9] text-[#3525cd] font-bold text-xs rounded-xl border border-[#d7dff9] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-[#d7dff9] text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl border border-[#d7dff9] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <AnimatedIcon icon={FileText} size="xs" variant="minimal" />
               <span>Verified Transcript</span>
@@ -128,7 +128,7 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
 
             <button
               onClick={onStartArena}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#3525cd] hover:bg-[#1e00a9] text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
               <AnimatedIcon icon={Play} size="xs" variant="minimal" className="fill-white" />
               <span>Launch Practice Arena</span>
@@ -140,12 +140,12 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
       {/* Upcoming Mock Sessions */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display font-bold text-xl text-[#0b1c30]">
+          <h2 className="font-display font-bold text-xl text-zinc-900 dark:text-zinc-100">
             Upcoming Sessions
           </h2>
           <button
             onClick={onStartArena}
-            className="text-xs font-bold text-[#3525cd] hover:underline cursor-pointer"
+            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
           >
             Schedule New +
           </button>
@@ -159,24 +159,24 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: '-10px' }}
               transition={{ duration: 0.4 }}
-              className="bg-white border border-[#c7c4d8]/60 rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#3525cd]/40 transition-colors"
+              className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#3525cd]/40 transition-colors"
             >
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#eff4ff] border border-[#d7dff9] flex flex-col items-center justify-center text-[#3525cd] shrink-0 font-display">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-[#d7dff9] flex flex-col items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0 font-display">
                   <span className="text-[11px] font-semibold uppercase">{sess.dateMonth}</span>
                   <span className="text-lg font-bold leading-none">{sess.dateDay}</span>
                 </div>
 
                 <div>
-                  <h3 className="font-display font-bold text-base text-[#0b1c30]">
+                  <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100">
                     {sess.title}
                   </h3>
-                  <div className="flex items-center gap-3 text-xs text-[#777587] mt-0.5">
+                  <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                     <span className="flex items-center gap-1">
                       <AnimatedIcon icon={Clock} size="xs" variant="minimal" />
                       {sess.timeRange}
                     </span>
-                    <span className="bg-[#f8f9ff] text-[#464555] px-2 py-0.5 rounded-md border border-[#e5eeff] font-medium capitalize">
+                    <span className="bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-800 font-medium capitalize">
                       {sess.type}
                     </span>
                   </div>
@@ -186,7 +186,7 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={onStartArena}
-                  className="w-full sm:w-auto px-4 py-2 bg-[#3525cd] hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2 bg-indigo-600 dark:bg-indigo-500 hover:bg-[#1e00a9] text-white text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer"
                 >
                   Join Room
                 </button>
@@ -198,7 +198,7 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
 
       {/* Quick Preparation Access Cards Grid with Line Drawing Icons as You Scroll */}
       <div className="space-y-4">
-        <h2 className="font-display font-bold text-xl text-[#0b1c30]">
+        <h2 className="font-display font-bold text-xl text-zinc-900 dark:text-zinc-100">
           Quick Access Hub
         </h2>
 
@@ -210,19 +210,19 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
             viewport={{ once: false, margin: '-20px' }}
             transition={{ duration: 0.4, delay: 0.05 }}
             onClick={() => onNavigatePrep('library')}
-            className="bg-white border border-[#c7c4d8]/60 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
+            className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
           >
             <VectorDrawIcon name="target" size="lg" badgeTheme="indigo" delay={0.05} />
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <h3 className="font-display font-bold text-base text-[#0b1c30] group-hover:text-[#3525cd] transition-colors">
+                <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                   Common Questions
                 </h3>
-                <span className="text-xs font-bold text-[#3525cd]">45%</span>
+                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">45%</span>
               </div>
-              <p className="text-xs text-[#464555] mt-1 mb-3">Top 50 algorithm & behavioral questions.</p>
-              <div className="w-full bg-[#eceef3] h-1.5 rounded-full overflow-hidden">
-                <div className="bg-[#3525cd] h-full rounded-full w-[45%]" />
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 mb-3">Top 50 algorithm & behavioral questions.</p>
+              <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full w-[45%]" />
               </div>
             </div>
           </motion.div>
@@ -234,14 +234,14 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
             viewport={{ once: false, margin: '-20px' }}
             transition={{ duration: 0.4, delay: 0.1 }}
             onClick={() => onNavigatePrep('library')}
-            className="bg-white border border-[#c7c4d8]/60 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
+            className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
           >
             <VectorDrawIcon name="discover" size="lg" badgeTheme="indigo" delay={0.1} />
             <div>
-              <h3 className="font-display font-bold text-base text-[#0b1c30] group-hover:text-[#3525cd] transition-colors">
+              <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                 Company Research
               </h3>
-              <p className="text-xs text-[#464555] mt-1">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                 Deep dive into Google, Meta, Nebula AI, and FinFlow rubrics.
               </p>
             </div>
@@ -254,14 +254,14 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
             viewport={{ once: false, margin: '-20px' }}
             transition={{ duration: 0.4, delay: 0.15 }}
             onClick={onStartArena}
-            className="bg-white border border-[#c7c4d8]/60 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
+            className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
           >
             <VectorDrawIcon name="showcase" size="lg" badgeTheme="indigo" delay={0.15} />
             <div>
-              <h3 className="font-display font-bold text-base text-[#0b1c30] group-hover:text-[#3525cd] transition-colors">
+              <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                 Mock Interview
               </h3>
-              <p className="text-xs text-[#464555] mt-1">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                 Simulate 1-on-1 video interviews with real-time feedback.
               </p>
             </div>
@@ -274,14 +274,14 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
             viewport={{ once: false, margin: '-20px' }}
             transition={{ duration: 0.4, delay: 0.2 }}
             onClick={() => onNavigatePrep('library')}
-            className="bg-white border border-[#c7c4d8]/60 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
+            className="bg-white border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-[#3525cd]/40 transition-all cursor-pointer group flex items-start gap-4"
           >
             <VectorDrawIcon name="connect" size="lg" badgeTheme="indigo" delay={0.2} />
             <div>
-              <h3 className="font-display font-bold text-base text-[#0b1c30] group-hover:text-[#3525cd] transition-colors">
+              <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                 Behavioral Prep
               </h3>
-              <p className="text-xs text-[#464555] mt-1">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                 Structure stories using STAR and leadership principles.
               </p>
             </div>
@@ -299,18 +299,18 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
             <VectorDrawIcon name="connect" size="lg" badgeTheme="dark" delay={0.25} />
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="font-display font-bold text-base text-[#0b1c30] group-hover:text-[#3525cd] transition-colors">
+                <h3 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                   System Architecture Live Simulation Lab
                 </h3>
-                <span className="bg-[#eff4ff] text-[#3525cd] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                   Interactive Simulator
                 </span>
               </div>
-              <p className="text-xs text-[#464555] mt-1">
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
                 Simulate high-concurrency 100k RPS traffic loads, test failover chaos injection, inspect latencies, and get Gemini AI reliability audits.
               </p>
             </div>
-            <ArrowRight className="w-5 h-5 text-[#3525cd] self-center shrink-0 hidden sm:block group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-5 h-5 text-indigo-600 dark:text-indigo-400 self-center shrink-0 hidden sm:block group-hover:translate-x-1 transition-transform" />
           </motion.div>
         </div>
       </div>
@@ -325,10 +325,10 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
       >
         <AnimatedIcon icon={Flame} size="md" badgeColor="indigo" />
         <div>
-          <h3 className="font-display font-bold text-sm text-[#0b1c30]">
+          <h3 className="font-display font-bold text-sm text-zinc-900 dark:text-zinc-100">
             Tip of the Day: Quantify the Result
           </h3>
-          <p className="text-xs text-[#464555] mt-1 leading-relaxed">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 leading-relaxed">
             When concluding your behavioral STAR answers, always provide hard numbers (e.g. "reduced latency by 42%" or "boosted sprint velocity by 25%"). Interviewers index heavily on measurable business impact.
           </p>
         </div>
@@ -344,3 +344,4 @@ export const PrepHubView: React.FC<PrepHubViewProps> = ({
     </div>
   );
 };
+
