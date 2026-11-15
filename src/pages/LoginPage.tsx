@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GeovaLogo } from '../components/GeovaLogo';
 import {
@@ -15,6 +15,11 @@ import {
   AlertCircle,
   CheckCircle2,
   Database,
+  ShieldCheck,
+  Cpu,
+  Layers,
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { login, register, PortalRole } from '../services/authService';
 
@@ -24,9 +29,10 @@ interface PortalConfig {
   role: PortalRole;
   label: string;
   tagline: string;
+  badge: string;
   icon: React.ReactNode;
   color: string;
-  bgGlow: string;
+  accentBg: string;
   borderActive: string;
   btnBg: string;
   placeholderEmail: string;
@@ -38,27 +44,29 @@ interface PortalConfig {
 const PORTALS: PortalConfig[] = [
   {
     role: 'student',
-    label: 'Student',
-    tagline: 'Prep, build projects & get verified',
-    icon: <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />,
-    color: 'text-indigo-500 dark:text-indigo-400',
-    bgGlow: 'from-indigo-600/20 via-sky-500/10 to-transparent',
-    borderActive: 'border-indigo-500 ring-2 ring-indigo-500/20',
-    btnBg: 'bg-indigo-600 hover:bg-indigo-700',
-    placeholderEmail: 'you@university.edu',
-    placeholderInstitution: 'e.g. Stanford / Self-Taught',
+    label: 'Candidate',
+    tagline: 'Prep, build distributed systems & get verified by top tech employers',
+    badge: 'Student Portal',
+    icon: <GraduationCap className="w-4 h-4" />,
+    color: 'text-indigo-400',
+    accentBg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+    borderActive: 'border-indigo-500 bg-indigo-500/15 text-white shadow-sm ring-1 ring-indigo-500/30',
+    btnBg: 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/25',
+    placeholderEmail: 'student@university.edu',
+    placeholderInstitution: 'e.g. Stanford University / Self-Taught',
     demoEmail: 'student@geova.ai',
     demoPassword: 'student123',
   },
   {
     role: 'employer',
-    label: 'Company',
-    tagline: 'Recruit verified engineering talent',
-    icon: <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />,
-    color: 'text-emerald-500 dark:text-emerald-400',
-    bgGlow: 'from-emerald-600/20 via-teal-500/10 to-transparent',
-    borderActive: 'border-emerald-500 ring-2 ring-emerald-500/20',
-    btnBg: 'bg-emerald-600 hover:bg-emerald-700',
+    label: 'Corporate',
+    tagline: 'Discover machine-verified engineering talent and review live project architectures',
+    badge: 'Partner Portal',
+    icon: <Building2 className="w-4 h-4" />,
+    color: 'text-emerald-400',
+    accentBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    borderActive: 'border-emerald-500 bg-emerald-500/15 text-white shadow-sm ring-1 ring-emerald-500/30',
+    btnBg: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/25',
     placeholderEmail: 'recruiter@company.com',
     placeholderInstitution: 'e.g. Nebula AI / Stripe',
     demoEmail: 'recruiter@geova.ai',
@@ -66,13 +74,14 @@ const PORTALS: PortalConfig[] = [
   },
   {
     role: 'provider',
-    label: 'School',
-    tagline: 'Monitor cohorts & verify projects',
-    icon: <School className="w-4 h-4 sm:w-5 sm:h-5" />,
-    color: 'text-purple-500 dark:text-purple-400',
-    bgGlow: 'from-purple-600/20 via-violet-500/10 to-transparent',
-    borderActive: 'border-purple-500 ring-2 ring-purple-500/20',
-    btnBg: 'bg-purple-600 hover:bg-purple-700',
+    label: 'Educator',
+    tagline: 'Monitor university cohort readiness, grade practice interviews & endorse projects',
+    badge: 'Faculty Portal',
+    icon: <School className="w-4 h-4" />,
+    color: 'text-purple-400',
+    accentBg: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+    borderActive: 'border-purple-500 bg-purple-500/15 text-white shadow-sm ring-1 ring-purple-500/30',
+    btnBg: 'bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/25',
     placeholderEmail: 'faculty@university.edu',
     placeholderInstitution: 'e.g. MIT / Covenant University',
     demoEmail: 'faculty@geova.ai',
@@ -134,230 +143,315 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthSuccess }) => {
         }
         resp = await register(email, password, name, activePortal, institution);
       }
-      setSuccess(`Welcome, ${resp.user.name}! Entering your portal...`);
-      setTimeout(() => onAuthSuccess(activePortal, resp.user.name), 800);
+      setSuccess(`Authenticated as ${resp.user.name}. Entering portal...`);
+      setTimeout(() => onAuthSuccess(activePortal, resp.user.name), 600);
     } catch (err: any) {
-      setError(err.message || 'Authentication failed. Please try again.');
+      setError(err.message || 'Authentication failed. Please verify credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col items-center justify-center relative overflow-y-auto py-6 sm:py-8 px-4">
-
-      {/* Ambient Background Glow */}
+    <div className="min-h-screen w-full bg-[#030712] text-zinc-100 flex flex-col justify-center items-center relative overflow-y-auto p-4 sm:p-6 lg:p-8">
+      {/* Dynamic Ambient Background Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-b ${portal.bgGlow} blur-3xl opacity-60`}
-          animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.7, 0.5] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-[128px]" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/15 rounded-full blur-[128px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-sky-500/5 rounded-full blur-[140px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md my-auto">
+      {/* Main Split Layout Container */}
+      <div className="relative z-10 w-full max-w-5xl bg-zinc-950/80 border border-zinc-800/80 rounded-3xl shadow-2xl backdrop-blur-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 my-auto">
+        
+        {/* Left Column: Platform Branding & Value Props (Visible on desktop & tablet) */}
+        <div className="hidden lg:flex lg:col-span-5 p-8 xl:p-10 flex-col justify-between border-r border-zinc-800/80 bg-gradient-to-br from-zinc-900/40 via-zinc-950/60 to-black relative">
+          {/* Subtle Grid Accent */}
+          <div className="space-y-6">
+            {/* Header Brand */}
+            <div className="flex items-center gap-3">
+              <GeovaLogo size="sm" className="filter drop-shadow-[0_4px_12px_rgba(99,102,241,0.4)]" />
+              <div>
+                <span className="font-display font-black text-lg tracking-tight text-white flex items-center gap-1.5">
+                  GEOVA <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 uppercase tracking-wider">v2.0</span>
+                </span>
+                <p className="text-[11px] text-zinc-400 font-medium tracking-wide">
+                  Talent & Technical Ecosystem
+                </p>
+              </div>
+            </div>
 
-        {/* Logo + Brand */}
-        <div className="flex flex-col items-center mb-4 sm:mb-5 space-y-1.5 sm:space-y-2">
-          <GeovaLogo size="md" className="filter drop-shadow-[0_6px_16px_rgba(99,102,241,0.35)]" />
-          <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">GEOVA Platform</h1>
-            <p className="text-[10px] sm:text-xs text-zinc-400 font-semibold tracking-widest uppercase mt-0.5">
-              Talent & Technical Ecosystem
-            </p>
+            {/* Hero Value Statement */}
+            <div className="space-y-2 pt-2">
+              <h2 className="font-display font-bold text-2xl xl:text-3xl text-zinc-100 leading-tight">
+                Engineering proof over paper resumes.
+              </h2>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Connect directly with engineering partners through machine-verified system architectures, agile sprint squads, and real-time practice interviews.
+              </p>
+            </div>
+
+            {/* Feature Highlights Bento Items */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60">
+                <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 mt-0.5">
+                  <Cpu className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-200">Verified System Architectures</h4>
+                  <p className="text-[11px] text-zinc-400 leading-snug mt-0.5">
+                    Demonstrate Raft consensus engines, microservices, and live telemetry.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 mt-0.5">
+                  <Layers className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-200">Collaborative Sprint Squads</h4>
+                  <p className="text-[11px] text-zinc-400 leading-snug mt-0.5">
+                    Agile task boards with real-time status progression from todo to complete.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60">
+                <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 mt-0.5">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-zinc-200">Interactive Prep & Rubrics</h4>
+                  <p className="text-[11px] text-zinc-400 leading-snug mt-0.5">
+                    Algorithmic practice arena, voice pacing metrics, and readiness scoring.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Live System Indicator */}
+          <div className="pt-6 border-t border-zinc-800/60 flex items-center justify-between text-xs text-zinc-400">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-medium text-[11px]">Live SQLite Database</span>
+            </div>
+            <span className="text-[11px] font-mono text-zinc-500">13 Tables Synced</span>
           </div>
         </div>
 
-        {/* Portal Selector Tabs */}
-        <div className="flex gap-2 mb-3.5 sm:mb-4">
-          {PORTALS.map(p => (
-            <button
-              key={p.role}
-              onClick={() => handlePortalSwitch(p.role)}
-              className={`flex-1 py-2 px-2.5 rounded-xl border text-[11px] font-bold transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                activePortal === p.role
-                  ? `bg-zinc-900 ${p.borderActive} text-white`
-                  : 'bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-600'
-              }`}
-            >
-              <span className={activePortal === p.role ? p.color : ''}>{p.icon}</span>
-              <span>{p.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Card */}
-        <motion.div
-          key={activePortal}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-zinc-950 border border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl"
-        >
-          {/* Mode toggle */}
-          <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 mb-4 border border-zinc-800">
-            {(['login', 'register'] as AuthMode[]).map(m => (
-              <button
-                key={m}
-                onClick={() => { setAuthMode(m); resetForm(); }}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  authMode === m
-                    ? 'bg-zinc-700 text-white shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {m === 'login' ? 'Sign In' : 'Create Account'}
-              </button>
-            ))}
+        {/* Right Column: Authentication Interface */}
+        <div className="lg:col-span-7 p-6 sm:p-8 xl:p-10 flex flex-col justify-center">
+          
+          {/* Mobile-Only Header Branding */}
+          <div className="lg:hidden flex items-center gap-3 mb-6">
+            <GeovaLogo size="sm" />
+            <div>
+              <h1 className="font-display font-bold text-lg text-white">GEOVA Platform</h1>
+              <p className="text-[11px] text-zinc-400">Talent & Technical Ecosystem</p>
+            </div>
           </div>
 
-          {/* Tagline */}
-          <div className="mb-3.5">
-            <h2 className="text-sm sm:text-base font-bold text-white">
-              {authMode === 'login' ? `Welcome back` : `Join as a ${portal.label}`}
-            </h2>
-            <p className="text-xs text-zinc-400 mt-0.5">{portal.tagline}</p>
+          {/* Top Row: Portal Role Segmented Switcher */}
+          <div className="mb-5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2">
+              Select Workspace Portal
+            </label>
+            <div className="grid grid-cols-3 gap-2 p-1 bg-zinc-900/90 rounded-2xl border border-zinc-800">
+              {PORTALS.map(p => (
+                <button
+                  key={p.role}
+                  type="button"
+                  onClick={() => handlePortalSwitch(p.role)}
+                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    activePortal === p.role
+                      ? p.borderActive
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
+                  }`}
+                >
+                  <span className={activePortal === p.role ? p.color : 'text-zinc-500'}>
+                    {p.icon}
+                  </span>
+                  <span>{p.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-2.5">
-            {/* Name (register only) */}
-            <AnimatePresence>
-              {authMode === 'register' && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="overflow-hidden space-y-2.5"
-                >
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="Full Name"
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
-                    />
-                  </div>
-                  <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                    <input
-                      type="text"
-                      value={institution}
-                      onChange={e => setInstitution(e.target.value)}
-                      placeholder={portal.placeholderInstitution}
-                      className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Auth Card Content */}
+          <div className="space-y-4">
+            
+            {/* Header: Mode Toggle + Active Role Tagline */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+              <div>
+                <h3 className="font-display font-bold text-lg text-white">
+                  {authMode === 'login' ? `Welcome to ${portal.badge}` : `Create ${portal.badge} Account`}
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">
+                  {portal.tagline}
+                </p>
+              </div>
 
-            {/* Email */}
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder={portal.placeholderEmail}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
-              />
+              {/* Mode Switch Pills */}
+              <div className="flex items-center gap-1 bg-zinc-900 rounded-xl p-1 border border-zinc-800 shrink-0 self-start sm:self-auto">
+                {(['login', 'register'] as AuthMode[]).map(m => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => { setAuthMode(m); resetForm(); }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      authMode === m
+                        ? 'bg-zinc-800 text-white shadow-xs'
+                        : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
+                  >
+                    {m === 'login' ? 'Sign In' : 'Register'}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Password */}
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-xl py-2 pl-10 pr-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 transition-colors"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+            {/* Input Form */}
+            <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Name & Institution (Register only) */}
+              <AnimatePresence>
+                {authMode === 'register' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden space-y-2.5"
+                  >
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Full Legal Name"
+                        className="w-full bg-zinc-900/90 border border-zinc-700/80 rounded-xl py-2 pl-10 pr-4 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-hidden focus:border-indigo-500 transition-colors"
+                      />
+                    </div>
+                    <div className="relative">
+                      <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                      <input
+                        type="text"
+                        value={institution}
+                        onChange={e => setInstitution(e.target.value)}
+                        placeholder={portal.placeholderInstitution}
+                        className="w-full bg-zinc-900/90 border border-zinc-700/80 rounded-xl py-2 pl-10 pr-4 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-hidden focus:border-indigo-500 transition-colors"
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {/* Error */}
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-start gap-2 text-xs text-red-400 bg-red-950/40 border border-red-900/50 rounded-xl px-3 py-2"
-                >
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Success */}
-            <AnimatePresence>
-              {success && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 rounded-xl px-3 py-2"
-                >
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  {success}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading || !!success}
-              className={`w-full py-2.5 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg ${portal.btnBg} disabled:opacity-60 disabled:cursor-not-allowed`}
-            >
-              {loading ? (
-                <motion.div
-                  className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.6, repeat: Infinity, ease: 'linear' }}
+              {/* Email Address */}
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder={portal.placeholderEmail}
+                  className="w-full bg-zinc-900/90 border border-zinc-700/80 rounded-xl py-2 pl-10 pr-4 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-hidden focus:border-indigo-500 transition-colors"
                 />
-              ) : (
-                <>
-                  {authMode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
+              </div>
 
-          {/* Real Credentials Autofill for Fast Testing */}
-          {authMode === 'login' && (
-            <div className="mt-3 pt-2.5 border-t border-zinc-800/80 flex flex-col gap-2">
+              {/* Password */}
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Password (min. 6 characters)"
+                  className="w-full bg-zinc-900/90 border border-zinc-700/80 rounded-xl py-2 pl-10 pr-10 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-hidden focus:border-indigo-500 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {/* Error Message */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-start gap-2 text-xs text-red-400 bg-red-950/40 border border-red-900/50 rounded-xl px-3 py-2"
+                  >
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Success Message */}
+              <AnimatePresence>
+                {success && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 rounded-xl px-3 py-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{success}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Submit Action */}
               <button
-                type="button"
-                onClick={fillDemo}
-                className="w-full py-2 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold border border-zinc-700/80 hover:border-zinc-500 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group"
+                type="submit"
+                disabled={loading || !!success}
+                className={`w-full py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md ${portal.btnBg} disabled:opacity-60 disabled:cursor-not-allowed`}
               >
-                <Database className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
-                <span>Fill Seeded DB Account ({portal.label})</span>
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>{authMode === 'login' ? `Sign In to ${portal.label} Portal` : 'Create Account'}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
-            </div>
-          )}
-        </motion.div>
+            </form>
 
-        {/* Database notice */}
-        <p className="text-center text-[10px] sm:text-[11px] text-zinc-500 mt-2.5 sm:mt-3 flex items-center justify-center gap-1.5">
-          <Database className="w-3 h-3 text-emerald-400" />
-          <span>Connected to live SQLite database. Register or sign in for real persistence.</span>
-        </p>
+            {/* Quick 1-Click Database Account Autofill */}
+            {authMode === 'login' && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={fillDemo}
+                  className="w-full py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold border border-zinc-800 hover:border-zinc-600 transition-all flex items-center justify-center gap-2 cursor-pointer group"
+                >
+                  <Database className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform" />
+                  <span>Autofill Seeded DB Account ({portal.label})</span>
+                </button>
+              </div>
+            )}
+
+            {/* Footer Trust & Security Note */}
+            <div className="pt-2 flex items-center justify-between text-[11px] text-zinc-500 border-t border-zinc-800/80">
+              <span className="flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                <span>JWT & Bcrypt Encrypted</span>
+              </span>
+              <span>Strict Role-Isolated Portals</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
